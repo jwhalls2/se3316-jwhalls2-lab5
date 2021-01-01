@@ -16,7 +16,7 @@ var cors = require('cors');
 app.use(cors());
 
 // Saving the JSON file to an array to be used later.
-let courseData = JSON.parse(fs.readFileSync('./Lab3-timetable-data.json'));
+let courseData = JSON.parse(fs.readFileSync('Lab3-timetable-data.json'));
 
 //Setup serving front-end code
 app.use('/', express.static('static'));
@@ -31,6 +31,237 @@ app.use((req, res, next) => { // for all routes
 // This is a built in express function for parsing as a json.
 // Essentially identical to bodyParser.
 app.use(express.json());
+
+//get list of courses
+router.get('/', (req, res) => {
+    res.send(courseData);
+});
+
+// Gets list of courses by subject code
+router.get('/:subject', [check('subject').isLength({ max: 8 })], (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        console.log(errors);
+        return res.status(422).json({ errors: errors.array() });
+    }
+    const subjectCode = req.params.subject;
+    const course = courseData.filter((data) => String(data.subject) === subjectCode);
+    if (course.length > 0) {
+        res.send(course);
+    } else {
+        res.status(404).send(`Courses with subject code: ${subjectCode} were not found!`);
+    }
+});
+
+// Gets list of courses by keywords
+router.get('/keyword/:keyword', [check('keyword').isLength({ min: 4 })], (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        console.log(errors);
+        return res.status(422).json({ errors: errors.array() });
+    }
+    const key = req.params.keyword;
+    const course = courseData.filter((data) => String(data.catalog_nbr).includes(key));
+    const course2 = courseData.filter((data) => String(data.className).includes(key));
+
+    if (course.length > 0 && course2.length < 1) {
+        res.send(course);
+    } else if (course.length < 1 && course2.length > 0) {
+        res.send(course2);
+    } else if (course.length > 0 && course2.length > 0) {
+
+        var array = course.concat(course2).unique();
+        res.send(array);
+    } else {
+        res.status(404).send(`Courses with keyword: ${key} were not found!`);
+    }
+});
+
+Array.prototype.unique = function() {
+    var a = this.concat();
+    for (var i = 0; i < a.length; ++i) {
+        for (var j = i + 1; j < a.length; ++j) {
+            if (a[i] === a[j])
+                a.splice(j--, 1);
+        }
+    }
+
+    return a;
+};
+
+
+// Get courses by catalog numbers
+router.get('/course_catalog/:catalog_nbr', [check('catalog_nbr').isLength({ max: 5 })], (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        console.log(errors);
+        return res.status(422).json({ errors: errors.array() });
+    }
+    const courseCode = req.params.catalog_nbr;
+    const course = courseData.filter((data) => String(data.catalog_nbr) === courseCode);
+    if (course.length > 0) {
+        res.send(course);
+    } else {
+        res.status(404).send(`Courses with course code: ${catalog_nbr} were not found!`);
+    }
+});
+
+// Get details for a given course by subject, optional course component, and course code
+router.get('/:subject/:catalog_nbr/:ssr_component?', [check('subject').isLength({ max: 8 }), check('catalog_nbr').isLength({ max: 5 }), check('ssr_component').isLength({ max: 3 })], (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        console.log(errors);
+        return res.status(422).json({ errors: errors.array() });
+    }
+    const subjectCode = req.params.subject;
+    const courseCode = req.params.catalog_nbr;
+    const courseComponent = req.params.ssr_component;
+
+    const courseBySubject = courseData.filter((data) => String(data.subject) === subjectCode);
+    if (courseBySubject.length < 1) {
+        res.status(404).send(`Courses with subject code: ${subjectCode} were not found!`);
+        return;
+    }
+
+    const courseByCode = courseBySubject.filter((data) => String(data.catalog_nbr) === courseCode);
+    if (courseByCode.length < 1) {
+        res.status(404).send(`Courses with subject code: ${subjectCode} and course code: ${courseCode} were not found!`);
+        return;
+    }
+
+    if (!courseComponent) {
+        res.send(courseByCode);
+    } else {
+        const courseByComponent = courseByCode.filter((data) => String(data.course_info[0].ssr_component) === courseComponent);
+
+        if (courseByComponent.length < 1) {
+            res.status(404).send(`Courses with subject code: ${subjectCode}, course code: ${courseCode}, and course component: ${courseComponent} were not found!`);
+            return;
+        } else {
+            res.send(courseByComponent);
+        }
+    }
+
+});
+
+//GET a list of all schedules
+app.get('/api/schedules', (req, res) => {
+    database.find({}, function(err, docs) {
+        res.send(docs);
+    });
+});
+
+//GET a given schedule - we defined schedule names to be maximum 20 characters on the front end, so we keep this info for the backend, just in case anything manages
+//to get past the front end validation.
+app.get('/api/schedules/:schedule_name', [check('schedule_name').isLength({ max: 20 })], (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        console.log(errors);
+        return res.status(422).json({ errors: errors.array() });
+    }
+    scheduleName = req.params.schedule_name;
+    database.find({ name: scheduleName }, function(err, docs) {
+        if (docs.length < 1) {
+            res.status(400).json("This schedule does not exist.");
+        } else {
+            res.send(docs[0]);
+        }
+    })
+})
+
+//DELETE a given schedule
+app.delete('/api/schedules/:schedule_name', [check('schedule_name').isLength({ max: 20 })], (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        console.log(errors);
+        return res.status(422).json({ errors: errors.array() });
+    }
+    scheduleName = req.params.schedule_name;
+    database.find({ name: scheduleName }, function(err, docs) {
+        if (docs.length < 1) {
+            res.status(400).json("This schedule does not exist.");
+        } else {
+            database.remove({ name: scheduleName }, {}, function(err, numRemoved) {
+                numRemoved = 1
+            });
+
+            res.json(console.log(`Deleted schedule ${scheduleName}!`));
+        }
+    });
+});
+
+//DELETE all schedules
+app.delete('/api/schedules', (req, res) => {
+    database.remove({}, { multi: true }, function(err, numRemoved) {
+        res.json(console.log("Deleted all schedules!"));
+    });
+});
+
+
+// POST a new schedule if that schedule name doesn't already exist.
+app.post('/api/schedules', [check('name').isLength({ max: 20 })], (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        console.log(errors);
+        return res.status(422).json({ errors: errors.array() });
+    }
+    const scheduleData = req.body;
+
+
+    User.findOne({ _id: req._id }, (err, user) => {
+        if (err) res.status(404).json(err);
+        if (user) {
+            if (scheduleData.name) {
+                let schedule = new Schedule(scheduleData);
+                console.log(scheduleData.name + " Was sent to be added");
+                schedule.save((err, schedule) => {
+                    if (err) {
+                        res.status(400).json(err);
+                    } else res.status(200).send(schedule);
+                });
+            }
+        } else res.status(404).json('User not found!')
+    });
+
+    /*
+    database.find({ name: scheduleData.name }, function(err, docs) {
+        if (docs.length < 1) {
+            database.insert(scheduleData);
+            res.send(scheduleData);
+        } else {
+            res.status(400).json("This name already exists.");
+        }
+    });
+    */
+});
+
+
+// Route that removes the document in the database with a matching name to the request sent, and then inserts the updated request body into the database.
+app.put('/api/schedules', [check('name').isLength({ max: 20 })], (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        console.log(errors);
+        return res.status(422).json({ errors: errors.array() });
+    }
+    const overwriteSchedule = req.body;
+
+
+
+    database.find({ name: overwriteSchedule.name }, function(err, docs) {
+        if (docs.length < 1) {
+            res.status(400).json("This schedule does not exist.");
+        } else {
+
+            database.remove({ name: overwriteSchedule.name }, {}, function(err, numRemoved) {
+                numRemoved = 1
+            });
+
+            database.insert(overwriteSchedule);
+            res.send(overwriteSchedule);
+
+        }
+    });
+});
 
 //Route for authenticating user token
 app.post('/api/authenticate')
