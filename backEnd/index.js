@@ -9,6 +9,10 @@ const passport = require('passport');
 const { check, validationResult } = require('express-validator');
 const mongoose = require('mongoose');
 
+//Defining Models:
+const User = require('./models/User.js');
+const Schedule = require('./models/Schedule.js');
+
 //Connecting to DB
 mongoose.connect(process.env.DB_CONNECTION, { useNewUrlParser: true, useUnifiedTopology: true }, () => console.log("Connected to MongoDB!"));
 
@@ -146,9 +150,9 @@ router.get('/:subject/:catalog_nbr/:ssr_component?', [check('subject').isLength(
 
 //GET a list of all schedules
 app.get('/api/schedules', (req, res) => {
-    database.find({}, function(err, docs) {
+    Schedule.find({ public: true }, function(err, docs) {
         res.send(docs);
-    });
+    }).sort({ updatedAt: -1 })
 });
 
 //GET a given schedule - we defined schedule names to be maximum 20 characters on the front end, so we keep this info for the backend, just in case anything manages

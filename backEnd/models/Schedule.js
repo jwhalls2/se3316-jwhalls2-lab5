@@ -11,6 +11,10 @@ const SchedSchema = mongoose.Schema({
     course_code: {
         type: Array,
         required: true
+    },
+    public: {
+        type: Boolean,
+        required: true
     }
 });
 
