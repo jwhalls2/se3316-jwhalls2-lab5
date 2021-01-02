@@ -8,6 +8,8 @@ require('./config/passportConfig');
 const passport = require('passport');
 const { check, validationResult } = require('express-validator');
 const mongoose = require('mongoose');
+const rateLimit = require("express-rate-limit");
+const jwt = require('jsonwebtoken');
 
 //Defining Models:
 const User = require('./models/User.js');
@@ -51,7 +53,7 @@ const checkToken = (req, res, next) => {
     if (!token)
         return res.status(403).send({ auth: false, message: 'No token provided.' });
     else {
-        jwt.verify(token, secret,
+        jwt.verify(token, process.env.JWT_SECRET,
             (err, decoded) => {
                 if (err)
                     return res.status(500).send({ auth: false, message: 'Token authentication failed.' });
@@ -240,8 +242,6 @@ app.post('/api/schedules', [check('name').isLength({ max: 20 })], checkToken, sc
         return res.status(422).json({ errors: errors.array() });
     }
     const scheduleData = req.body;
-    console.log(req.body.user);
-
 
     User.findOne({ username: req.body.user }, (err, user) => {
         if (err) res.status(404).json(err);
