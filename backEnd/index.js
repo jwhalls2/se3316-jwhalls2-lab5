@@ -36,6 +36,34 @@ app.use((req, res, next) => { // for all routes
 // Essentially identical to bodyParser.
 app.use(express.json());
 
+//Limit is 20 Schedules per user.
+const scheduleLimit = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minute window
+    max: 20, // stops taking requests after 20
+    message: "Exceeds schedule limit, please try again in 15 minutes!"
+});
+
+//Verifying the JWT token.
+const checkToken = (req, res, next) => {
+    let token;
+    if ('authorization' in req.headers)
+        token = req.headers['authorization'].split(' ')[1];
+    if (!token)
+        return res.status(403).send({ auth: false, message: 'No token provided.' });
+    else {
+        jwt.verify(token, secret,
+            (err, decoded) => {
+                if (err)
+                    return res.status(500).send({ auth: false, message: 'Token authentication failed.' });
+                else {
+                    req.email = decoded.email;
+                    next();
+                }
+            }
+        )
+    }
+}
+
 //get list of courses
 router.get('/', (req, res) => {
     res.send(courseData);
@@ -150,60 +178,62 @@ router.get('/:subject/:catalog_nbr/:ssr_component?', [check('subject').isLength(
 
 //GET a list of all schedules
 app.get('/api/schedules', (req, res) => {
-    Schedule.find({ public: true }, function(err, docs) {
-        res.send(docs);
+    Schedule.find({ public: true }, function(err, schedules) {
+        res.send(schedules);
     }).sort({ updatedAt: -1 })
 });
 
 //GET a given schedule - we defined schedule names to be maximum 20 characters on the front end, so we keep this info for the backend, just in case anything manages
 //to get past the front end validation.
-app.get('/api/schedules/:schedule_name', [check('schedule_name').isLength({ max: 20 })], (req, res) => {
+app.get('/api/schedules/:schedule_name/:user', [check('schedule_name').isLength({ max: 20 })], (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         console.log(errors);
         return res.status(422).json({ errors: errors.array() });
     }
     scheduleName = req.params.schedule_name;
-    database.find({ name: scheduleName }, function(err, docs) {
-        if (docs.length < 1) {
-            res.status(400).json("This schedule does not exist.");
+    username = req.params.user;
+    Schedule.findOne({ name: scheduleName, user: username }, function(err, schedule) {
+        if (!schedule) {
+            res.status(404).json("Could not find schedule!");
         } else {
-            res.send(docs[0]);
+            res.send(schedule);
         }
     })
 })
 
 //DELETE a given schedule
-app.delete('/api/schedules/:schedule_name', [check('schedule_name').isLength({ max: 20 })], (req, res) => {
+app.delete('/api/schedules/:schedule_name/:user', [check('schedule_name').isLength({ max: 20 })], (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         console.log(errors);
         return res.status(422).json({ errors: errors.array() });
     }
     scheduleName = req.params.schedule_name;
-    database.find({ name: scheduleName }, function(err, docs) {
-        if (docs.length < 1) {
-            res.status(400).json("This schedule does not exist.");
+    username = req.params.user;
+    Schedule.findOne({ name: scheduleName, user: username }, function(err, schedule) {
+        if (schedule) {
+            Schedule.collection.deleteOne(schedule);
+            res.status(200).json(`Schedule: ${scheduleName} deleted!`);
         } else {
-            database.remove({ name: scheduleName }, {}, function(err, numRemoved) {
-                numRemoved = 1
-            });
-
-            res.json(console.log(`Deleted schedule ${scheduleName}!`));
+            res.status(404).json(`Schedule: ${scheduleName} not found!`);
         }
     });
 });
 
 //DELETE all schedules
 app.delete('/api/schedules', (req, res) => {
-    Schedule.deleteMany({}, { multi: true }, function(err, numRemoved) {
+    Schedule.deleteMany({}, function(err, numRemoved) {
+        if (err) {
+            res.status(err);
+        }
         res.json(console.log("Deleted all schedules!"));
     });
 });
 
 
 // POST a new schedule if that schedule name doesn't already exist.
-app.post('/api/schedules', [check('name').isLength({ max: 20 })], (req, res, next) => {
+app.post('/api/schedules', [check('name').isLength({ max: 20 })], checkToken, scheduleLimit, (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         console.log(errors);
