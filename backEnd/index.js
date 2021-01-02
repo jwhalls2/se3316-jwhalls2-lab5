@@ -4,7 +4,7 @@ const port = 3000;
 const fs = require('fs');
 const router = express.Router();
 require('dotenv/config');
-//require('./config/passportConfig');
+require('./config/passportConfig');
 const passport = require('passport');
 const { check, validationResult } = require('express-validator');
 const mongoose = require('mongoose');
@@ -196,23 +196,24 @@ app.delete('/api/schedules/:schedule_name', [check('schedule_name').isLength({ m
 
 //DELETE all schedules
 app.delete('/api/schedules', (req, res) => {
-    database.remove({}, { multi: true }, function(err, numRemoved) {
+    Schedule.deleteMany({}, { multi: true }, function(err, numRemoved) {
         res.json(console.log("Deleted all schedules!"));
     });
 });
 
 
 // POST a new schedule if that schedule name doesn't already exist.
-app.post('/api/schedules', [check('name').isLength({ max: 20 })], (req, res) => {
+app.post('/api/schedules', [check('name').isLength({ max: 20 })], (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         console.log(errors);
         return res.status(422).json({ errors: errors.array() });
     }
     const scheduleData = req.body;
+    console.log(req.body.user);
 
 
-    User.findOne({ _id: req._id }, (err, user) => {
+    User.findOne({ username: req.body.user }, (err, user) => {
         if (err) res.status(404).json(err);
         if (user) {
             if (scheduleData.name) {
@@ -226,22 +227,11 @@ app.post('/api/schedules', [check('name').isLength({ max: 20 })], (req, res) => 
             }
         } else res.status(404).json('User not found!')
     });
-
-    /*
-    database.find({ name: scheduleData.name }, function(err, docs) {
-        if (docs.length < 1) {
-            database.insert(scheduleData);
-            res.send(scheduleData);
-        } else {
-            res.status(400).json("This name already exists.");
-        }
-    });
-    */
 });
 
 
 // Route that removes the document in the database with a matching name to the request sent, and then inserts the updated request body into the database.
-app.put('/api/schedules', [check('name').isLength({ max: 20 })], (req, res) => {
+app.put('/api/schedules', [check('name').isLength({ max: 20 })], (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         console.log(errors);
@@ -251,21 +241,68 @@ app.put('/api/schedules', [check('name').isLength({ max: 20 })], (req, res) => {
 
 
 
-    database.find({ name: overwriteSchedule.name }, function(err, docs) {
-        if (docs.length < 1) {
-            res.status(400).json("This schedule does not exist.");
+    User.findOne({ username: req.body.user }, function(err, user) {
+        if (err) {
+            res.status(404).json(err);
+        }
+        if (user) {
+            //Now check if schedule name exists
+            Schedule.findOne({ name: overwriteSchedule.name, user: req.body.user }, function(err, schedule) {
+
+                if (err) {
+                    res.status(404).json(err);
+                }
+                if (schedule) {
+                    Schedule.collection.deleteOne(schedule);
+                    Schedule.collection.insertOne(overwriteSchedule);
+                    res.status(200).json("Schedule updated!")
+                } else {
+                    res.status(404).json(`Schedule: ${overwriteSchedule.name} not found!`);
+                }
+            })
         } else {
-
-            database.remove({ name: overwriteSchedule.name }, {}, function(err, numRemoved) {
-                numRemoved = 1
-            });
-
-            database.insert(overwriteSchedule);
-            res.send(overwriteSchedule);
-
+            res.status(404).json("User not found!")
         }
     });
 });
+
+//Post for login
+app.post('/api/login', (req, res) => {
+    passport.authenticate('local', (err, user, info) => {
+        // error from passport middleware
+        if (err) return res.status(400).json(err);
+        // registered user
+        else if (user) return res.status(200).json({ "token": user.generateJwt() });
+        // unknown user or wrong password
+        else return res.status(404).json(info);
+    })(req, res);
+})
+
+//Post for registering
+app.post('/api/register', (req, res, next) => {
+    var user = new User();
+    user.name = req.body.name;
+    user.username = req.body.username;
+    user.email = req.body.email;
+    user.password = req.body.password;
+    user.admin = req.body.admin;
+    user.activated = req.body.activated;
+    user.verified = req.body.verified;
+
+    // Make sure username/email are not duplicates
+
+    user.save((err, doc) => {
+        if (!err)
+            res.send(doc);
+        else {
+            if (err.code == 11000)
+                res.status(422).send(['Duplicate email address found.']);
+            else
+                return next(err);
+        }
+
+    });
+})
 
 //Route for authenticating user token
 app.post('/api/authenticate')

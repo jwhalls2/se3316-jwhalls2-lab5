@@ -15,6 +15,9 @@ const SchedSchema = mongoose.Schema({
     public: {
         type: Boolean,
         required: true
+    },
+    user: {
+        type: String
     }
 });
 
