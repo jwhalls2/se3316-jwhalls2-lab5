@@ -20,6 +20,7 @@ const Review = require('./models/Review.js');
 mongoose.connect(process.env.DB_CONNECTION, { useNewUrlParser: true, useUnifiedTopology: true }, () => console.log("Connected to MongoDB!"));
 
 var cors = require('cors');
+const { update } = require('./models/User.js');
 app.use(cors());
 
 // Saving the JSON file to an array to be used later.
@@ -327,8 +328,8 @@ app.post('/api/register', (req, res, next) => {
     user.username = req.body.username;
     user.email = req.body.email;
     user.password = req.body.password;
-    user.admin = req.body.admin;
-    user.activated = req.body.activated;
+    user.admin = false;
+    user.activated = true;
     user.verified = req.body.verified;
 
     // Make sure username/email are not duplicates
@@ -403,27 +404,42 @@ app.post("/api/review", checkToken, (req, res, next) => {
 });
 
 //Allows admin to update a user's account (admin/active/deactive)
-router.put('/api/user/:username', checkToken, function(req, res, next) {
+app.put("/api/user", checkToken, function(req, res, next) {
 
-    User.findOne({ username: req.params.username }, function(err, user) {
-        if (user.admin == false) {
+    console.log(req.body.adminName)
+    User.findOne({ username: req.body.adminName }, function(err, user) {
+
+        if (!user) {
+            res.status(404).send({ message: `No user by name ${req.params.username}!` })
+        }
+        if (!user.admin) {
             res.send({ message: "You are not an administrator!" });
         }
+
+        console.log(`Making ${req.body.username} an admin!`);
+
+        User.findOne({ username: req.body.username }, function(err, updateUser) {
+            if (!updateUser) {
+                res.status(404).json("This user does not exist!");
+            } else {
+                updateUser.admin = req.body.admin;
+                updateUser.activated = req.body.activated;
+            }
+
+            res.send(updateUser);
+        })
     })
 
-    if (!req.body.admin) {
-        res.status(400).send("Invalid! Choose true or false to let user be admin or not.");
-    }
+    /*
+        
 
-    if (!req.body.deactive) {
-        res.status(400).send("Invalid! Choose true or false to deactivate user account!");
-    } else {
-        User.findOneAndUpdate({ username: req.params.username }, req.body).then(function() {
-            User.findOne({ username: req.params.username }).then(function(user) {
-                res.send(user);
+         else {
+            User.findOneAndUpdate({ username: req.body.adminName }, req.body).then(function() {
+                User.findOne({ username: req.body.adminName }).then(function(user) {
+                    res.send(user);
+                });
             });
-        });
-    }
+        }*/
 });
 
 /*Make another user an admin
