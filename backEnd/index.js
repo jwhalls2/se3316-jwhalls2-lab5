@@ -180,7 +180,7 @@ router.get('/:subject/:catalog_nbr/:ssr_component?', [check('subject').isLength(
 
 });
 
-//GET a list of all schedules
+//GET a list of all public schedules
 app.get('/api/schedules', (req, res) => {
     Schedule.find({ public: true }, function(err, schedules) {
         res.send(schedules);
@@ -346,12 +346,79 @@ app.post('/api/register', (req, res, next) => {
     });
 })
 
-//Admin commands
+//Gets all of the reviews:
+app.get('/api/allReviews', (req, res) => {
+    Review.find({ hidden: false, infringing: false }, 'title courseId rating comment createdBy createdAt', function(err, review) {
+        if (err) {
+            return console.error(err);
+        } else {
+            res.send(review);
+        }
+    });
+});
 
-//Make another user an admin
+//Allows a user to post a review
+app.post("/api/review", checkToken, (req, res, next) => {
+
+    let review = new Review({
+        title: req.body.title,
+        courseId: req.body.courseId,
+        rating: req.body.rating,
+        comment: req.body.comment,
+        hidden: false,
+        createdBy: req.body.createdBy,
+        infringing: false
+    });
+
+    console.log(review);
+
+    if (!req.body.title) {
+        res.status(400).send("You must include a title for your review");
+    }
+    if (req.body.title.length > 16) {
+        res.status(400).send("This title is too long!");
+    }
+
+    if (!req.body.courseId) {
+        res.status(400).send("Which course are you trying to review?");
+    }
+
+    if (!req.body.rating) {
+        res.status(400).send("What is your rating for this course?");
+    }
+
+    if (!req.body.comment) {
+        res.status(400).send("You must provide a comment for your review!");
+    } else {
+        review.save(function(err) {
+            if (err) {
+                console.error(err.message);
+                res.send(err.message);
+            } else {
+                res.send(req.body);
+                console.log('Review Created Sucessfully');
+            }
+        });
+    }
+});
+
+router.put('/secure/review/:title', checkToken, function(req, res, next) {
+
+    if (!req.body.hidden) {
+        res.status(400).send("Invalid! Choose true if you want to hide review or false if you want to show review.");
+    } else {
+        Review.findOneAndUpdate({ title: req.params.title }, req.body).then(function() {
+            Review.findOne({ title: req.params.title }).then(function(review) {
+                res.send(review);
+            });
+        });
+    }
+});
+
+/*Make another user an admin
 app.put('/api/admin/giveAdmin', (req, res, next) => {
     User.findByIdAndUpdate
-})
+})*/
 
 
 // Installing router at the address /api/courseData
