@@ -70,12 +70,12 @@ const checkToken = (req, res, next) => {
 }
 
 //get list of courses
-router.get('/', (req, res) => {
+router.get('/open', (req, res) => {
     res.send(courseData);
 });
 
 // Gets list of courses by subject code
-router.get('/:subject', [check('subject').isLength({ max: 8 })], (req, res) => {
+router.get('/open/:subject', [check('subject').isLength({ max: 8 })], (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         console.log(errors);
@@ -91,7 +91,7 @@ router.get('/:subject', [check('subject').isLength({ max: 8 })], (req, res) => {
 });
 
 // Gets list of courses by keywords
-router.get('/keyword/:keyword', [check('keyword').isLength({ min: 4 })], (req, res) => {
+router.get('/open/keyword/:keyword', [check('keyword').isLength({ min: 4 })], (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         console.log(errors);
@@ -128,7 +128,7 @@ Array.prototype.unique = function() {
 
 
 // Get courses by catalog numbers
-router.get('/course_catalog/:catalog_nbr', [check('catalog_nbr').isLength({ max: 5 })], (req, res) => {
+router.get('/open/course_catalog/:catalog_nbr', [check('catalog_nbr').isLength({ max: 5 })], (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         console.log(errors);
@@ -144,7 +144,7 @@ router.get('/course_catalog/:catalog_nbr', [check('catalog_nbr').isLength({ max:
 });
 
 // Get details for a given course by subject, optional course component, and course code
-router.get('/:subject/:catalog_nbr/:ssr_component?', [check('subject').isLength({ max: 8 }), check('catalog_nbr').isLength({ max: 5 }), check('ssr_component').isLength({ max: 3 })], (req, res) => {
+router.get('/open/:subject/:catalog_nbr/:ssr_component?', [check('subject').isLength({ max: 8 }), check('catalog_nbr').isLength({ max: 5 }), check('ssr_component').isLength({ max: 3 })], (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         console.log(errors);
@@ -182,7 +182,7 @@ router.get('/:subject/:catalog_nbr/:ssr_component?', [check('subject').isLength(
 });
 
 //GET a list of all public schedules
-app.get('/api/schedules', (req, res) => {
+app.get('/api/open/schedules', (req, res) => {
     Schedule.find({ public: true }, function(err, schedules) {
         res.send(schedules);
     }).sort({ updatedAt: -1 })
@@ -190,7 +190,7 @@ app.get('/api/schedules', (req, res) => {
 
 //GET a given schedule - we defined schedule names to be maximum 20 characters on the front end, so we keep this info for the backend, just in case anything manages
 //to get past the front end validation.
-app.get('/api/schedules/:schedule_name/:user', [check('schedule_name').isLength({ max: 20 })], checkToken, (req, res) => {
+app.get('/api/secure/schedules/:schedule_name/:user', [check('schedule_name').isLength({ max: 20 })], checkToken, (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         console.log(errors);
@@ -208,7 +208,7 @@ app.get('/api/schedules/:schedule_name/:user', [check('schedule_name').isLength(
 })
 
 //DELETE a given schedule
-app.delete('/api/schedules/:schedule_name/:user', [check('schedule_name').isLength({ max: 20 })], checkToken, (req, res) => {
+app.delete('/api/secure/schedules/:schedule_name/:user', [check('schedule_name').isLength({ max: 20 })], checkToken, (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         console.log(errors);
@@ -227,7 +227,7 @@ app.delete('/api/schedules/:schedule_name/:user', [check('schedule_name').isLeng
 });
 
 //DELETE all schedules for one user
-app.delete('/api/schedules', checkToken, (req, res) => {
+app.delete('/api/secure/schedules', checkToken, (req, res) => {
     Schedule.deleteMany({ user: req.body.username }, function(err, schedules) {
         if (err) {
             res.status(err);
@@ -238,7 +238,7 @@ app.delete('/api/schedules', checkToken, (req, res) => {
 
 
 // POST a new schedule if that schedule name doesn't already exist.
-app.post('/api/schedules', [check('name').isLength({ max: 20 })], checkToken, scheduleLimit, (req, res, next) => {
+app.post('/api/secure/schedules', [check('name').isLength({ max: 20 })], checkToken, scheduleLimit, (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         console.log(errors);
@@ -274,7 +274,7 @@ app.post('/api/schedules', [check('name').isLength({ max: 20 })], checkToken, sc
 
 
 // Route that removes the document in the database with a matching name to the request sent, and then inserts the updated request body into the database.
-app.put('/api/schedules', [check('name').isLength({ max: 20 })], checkToken, (req, res, next) => {
+app.put('/api/secure/schedules', [check('name').isLength({ max: 20 })], checkToken, (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         console.log(errors);
@@ -348,7 +348,7 @@ app.post('/api/register', (req, res, next) => {
 })
 
 //Gets all of the non-hidden reviews:
-app.get('/api/allReviews', (req, res) => {
+app.get('/api/secure/allReviews', (req, res) => {
     Review.find({ hidden: false, infringing: false }, 'title courseId rating comment createdBy createdAt', function(err, review) {
         if (err) {
             return console.error(err);
@@ -359,7 +359,7 @@ app.get('/api/allReviews', (req, res) => {
 });
 
 //Allows a user to post a review
-app.post("/api/review", checkToken, (req, res, next) => {
+app.post("/api/secure/review", checkToken, (req, res, next) => {
 
     let review = new Review({
         title: req.body.title,
@@ -404,7 +404,7 @@ app.post("/api/review", checkToken, (req, res, next) => {
 });
 
 //Allows admins to get all reviews (hidden or not).
-app.get("/api/reviews", (req, res) => {
+app.get("/api/admin/reviews", (req, res) => {
     Review.find({}, 'title comment rating courseId hidden createdBy', function(err, review) {
         if (err) {
             return console.error(err);
@@ -417,7 +417,7 @@ app.get("/api/reviews", (req, res) => {
 });
 
 //Allows admins to mark reviews as hidden
-app.put('/api/reviews', checkToken, function(req, res, next) {
+app.put('/api/admin/reviews', checkToken, function(req, res, next) {
 
     Review.findOneAndUpdate({ title: req.body.title }, req.body).then(function() {
         Review.findOne({ title: req.body.title }).then(function(review) {
@@ -427,7 +427,7 @@ app.put('/api/reviews', checkToken, function(req, res, next) {
 });
 
 //Allows admin to update a user's account (admin/active/deactive)
-app.put("/api/user", checkToken, function(req, res, next) {
+app.put("/api/admin/user", checkToken, function(req, res, next) {
 
     console.log(req.body.adminName)
     User.findOne({ username: req.body.adminName }, function(err, user) {
@@ -452,24 +452,7 @@ app.put("/api/user", checkToken, function(req, res, next) {
             res.send(updateUser);
         })
     })
-
-    /*
-        
-
-         else {
-            User.findOneAndUpdate({ username: req.body.adminName }, req.body).then(function() {
-                User.findOne({ username: req.body.adminName }).then(function(user) {
-                    res.send(user);
-                });
-            });
-        }*/
 });
-
-/*Make another user an admin
-app.put('/api/admin/giveAdmin', (req, res, next) => {
-    User.findByIdAndUpdate
-})*/
-
 
 // Installing router at the address /api/courseData
 app.use('/api/courseData', router);
