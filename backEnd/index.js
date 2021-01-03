@@ -347,7 +347,7 @@ app.post('/api/register', (req, res, next) => {
     });
 })
 
-//Gets all of the reviews:
+//Gets all of the non-hidden reviews:
 app.get('/api/allReviews', (req, res) => {
     Review.find({ hidden: false, infringing: false }, 'title courseId rating comment createdBy createdAt', function(err, review) {
         if (err) {
@@ -401,6 +401,29 @@ app.post("/api/review", checkToken, (req, res, next) => {
             }
         });
     }
+});
+
+//Allows admins to get all reviews (hidden or not).
+app.get("/api/reviews", (req, res) => {
+    Review.find({}, 'title comment rating courseId hidden createdBy', function(err, review) {
+        if (err) {
+            return console.error(err);
+        } else if (req.body.admin == false) {
+            res.send({ message: "You are not an administrator!" });
+        } else {
+            res.send(JSON.stringify(review));
+        }
+    });
+});
+
+//Allows admins to mark reviews as hidden
+app.put('/api/reviews', checkToken, function(req, res, next) {
+
+    Review.findOneAndUpdate({ title: req.body.title }, req.body).then(function() {
+        Review.findOne({ title: req.body.title }).then(function(review) {
+            res.send(review);
+        });
+    });
 });
 
 //Allows admin to update a user's account (admin/active/deactive)
