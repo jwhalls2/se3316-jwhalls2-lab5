@@ -14,6 +14,7 @@ const jwt = require('jsonwebtoken');
 //Defining Models:
 const User = require('./models/User.js');
 const Schedule = require('./models/Schedule.js');
+const Review = require('./models/Review.js');
 
 //Connecting to DB
 mongoose.connect(process.env.DB_CONNECTION, { useNewUrlParser: true, useUnifiedTopology: true }, () => console.log("Connected to MongoDB!"));
@@ -48,8 +49,9 @@ const scheduleLimit = rateLimit({
 //Verifying the JWT token.
 const checkToken = (req, res, next) => {
     let token;
+    //If the authorization header is in the headers, it includes the token number.
     if ('authorization' in req.headers)
-        token = req.headers['authorization'].split(' ')[1];
+        token = req.headers.authorization;
     if (!token)
         return res.status(403).send({ auth: false, message: 'No token provided.' });
     else {
@@ -187,7 +189,7 @@ app.get('/api/schedules', (req, res) => {
 
 //GET a given schedule - we defined schedule names to be maximum 20 characters on the front end, so we keep this info for the backend, just in case anything manages
 //to get past the front end validation.
-app.get('/api/schedules/:schedule_name/:user', [check('schedule_name').isLength({ max: 20 })], (req, res) => {
+app.get('/api/schedules/:schedule_name/:user', [check('schedule_name').isLength({ max: 20 })], checkToken, (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         console.log(errors);
@@ -205,7 +207,7 @@ app.get('/api/schedules/:schedule_name/:user', [check('schedule_name').isLength(
 })
 
 //DELETE a given schedule
-app.delete('/api/schedules/:schedule_name/:user', [check('schedule_name').isLength({ max: 20 })], (req, res) => {
+app.delete('/api/schedules/:schedule_name/:user', [check('schedule_name').isLength({ max: 20 })], checkToken, (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         console.log(errors);
@@ -223,9 +225,9 @@ app.delete('/api/schedules/:schedule_name/:user', [check('schedule_name').isLeng
     });
 });
 
-//DELETE all schedules
-app.delete('/api/schedules', (req, res) => {
-    Schedule.deleteMany({}, function(err, numRemoved) {
+//DELETE all schedules for one user
+app.delete('/api/schedules', checkToken, (req, res) => {
+    Schedule.deleteMany({ user: req.body.username }, function(err, schedules) {
         if (err) {
             res.status(err);
         }
@@ -241,6 +243,8 @@ app.post('/api/schedules', [check('name').isLength({ max: 20 })], checkToken, sc
         console.log(errors);
         return res.status(422).json({ errors: errors.array() });
     }
+
+
     const scheduleData = req.body;
 
     User.findOne({ username: req.body.user }, (err, user) => {
@@ -248,12 +252,20 @@ app.post('/api/schedules', [check('name').isLength({ max: 20 })], checkToken, sc
         if (user) {
             if (scheduleData.name) {
                 let schedule = new Schedule(scheduleData);
-                console.log(scheduleData.name + " Was sent to be added");
-                schedule.save((err, schedule) => {
-                    if (err) {
-                        res.status(400).json(err);
-                    } else res.status(200).send(schedule);
-                });
+                Schedule.findOne({ user: scheduleData.user, name: scheduleData.name }, (error, existingSchedule) => {
+                    if (error) res.status(404).json(error);
+                    if (existingSchedule) {
+                        res.status(400).json("This schedule name already exists!");
+                    } else {
+                        console.log(scheduleData.name + " Was sent to be added");
+                        schedule.save((err, schedule) => {
+                            if (err) {
+                                res.status(400).json(err);
+                            } else res.status(200).send(schedule);
+                        });
+                    }
+                })
+
             }
         } else res.status(404).json('User not found!')
     });
@@ -261,7 +273,7 @@ app.post('/api/schedules', [check('name').isLength({ max: 20 })], checkToken, sc
 
 
 // Route that removes the document in the database with a matching name to the request sent, and then inserts the updated request body into the database.
-app.put('/api/schedules', [check('name').isLength({ max: 20 })], (req, res, next) => {
+app.put('/api/schedules', [check('name').isLength({ max: 20 })], checkToken, (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         console.log(errors);
@@ -334,8 +346,13 @@ app.post('/api/register', (req, res, next) => {
     });
 })
 
-//Route for authenticating user token
-app.post('/api/authenticate')
+//Admin commands
+
+//Make another user an admin
+app.put('/api/admin/giveAdmin', (req, res, next) => {
+    User.findByIdAndUpdate
+})
+
 
 // Installing router at the address /api/courseData
 app.use('/api/courseData', router);
