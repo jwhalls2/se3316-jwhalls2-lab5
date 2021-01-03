@@ -1,0 +1,44 @@
+<h2>Courses</h2>
+<div>
+    <label>Subject: 
+  <input #subject type="text" placeholder="Subject..."/>
+</label>
+    <label> Course Code: 
+    <input #catalog_nbr type="text" placeholder="Course Code..."/>
+  </label>
+    <label> Component (Optional): 
+    <input #ssr_component type="text" placeholder="Component..."/>
+    <button (click)="getFilteredCourses(subject.value, catalog_nbr.value, ssr_component.value)">Search</button>
+</label>
+<br>
+<div>
+  <label> Keyword:
+  <input #keyword type="text" placeholder="Keyword..."/>
+  <button (click)="getCourseByKey(keyword.value)">Search By Keyword</button>
+</label>
+</div>
+
+
+</div>
+<br>
+<button (click)="displayAll()">Display All Courses</button>
+
+
+<ul class="courses">
+    <div *ngFor="let course of courses"
+    (click)="ele.class = ele.class == 'showChildren' ? '' :  'showChildren'"
+  [ngClass]="{ hideChildren : ele.class !== 'showChildren' }" #ele>
+  <span class="courseList">{{course.subject}} {{course.catalog_nbr}} - "{{course.className}}" {{course.course_info[0].class_section}} ({{course.course_info[0].ssr_component}})
+    <br>{{course.course_info[0].days}} at {{course.course_info[0].start_time}} - {{course.course_info[0].end_time}}
+  </span> {{ele.ngClass}}
+    <div>Class Number: {{course.course_info[0].class_nbr}}
+      <br>Prerequisite Description: {{course.course_info[0].descrlong}}
+      <br>Campus: {{course.course_info[0].campus}}
+      <br>Facility ID: {{course.course_info[0]. facility_ID}}
+      <br>Instructors: {{course.course_info[0].instructors}}
+      <br>Enrollment Status: {{course.course_info[0].enrl_stat}}
+      <br>Enrollment Description: {{course.course_info[0].descr}}
+      <br>Course Description: {{course.catalog_description}}
+    </div>
+  </div>
+</ul>
