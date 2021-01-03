@@ -402,14 +402,25 @@ app.post("/api/review", checkToken, (req, res, next) => {
     }
 });
 
-router.put('/secure/review/:title', checkToken, function(req, res, next) {
+//Allows admin to update a user's account (admin/active/deactive)
+router.put('/api/user/:username', checkToken, function(req, res, next) {
 
-    if (!req.body.hidden) {
-        res.status(400).send("Invalid! Choose true if you want to hide review or false if you want to show review.");
+    User.findOne({ username: req.params.username }, function(err, user) {
+        if (user.admin == false) {
+            res.send({ message: "You are not an administrator!" });
+        }
+    })
+
+    if (!req.body.admin) {
+        res.status(400).send("Invalid! Choose true or false to let user be admin or not.");
+    }
+
+    if (!req.body.deactive) {
+        res.status(400).send("Invalid! Choose true or false to deactivate user account!");
     } else {
-        Review.findOneAndUpdate({ title: req.params.title }, req.body).then(function() {
-            Review.findOne({ title: req.params.title }).then(function(review) {
-                res.send(review);
+        User.findOneAndUpdate({ username: req.params.username }, req.body).then(function() {
+            User.findOne({ username: req.params.username }).then(function(user) {
+                res.send(user);
             });
         });
     }
