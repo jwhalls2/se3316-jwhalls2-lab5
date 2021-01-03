@@ -9,7 +9,7 @@ import {Course} from './course';
 export class CoursesService {
 
   // Change URL back when you go to NG build it.
-  private courseUrl = 'http://localhost:3000/api/courseData';
+  private courseUrl = 'http://localhost:3000/api/courseData/open';
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })

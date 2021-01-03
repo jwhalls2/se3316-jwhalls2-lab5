@@ -182,7 +182,7 @@ router.get('/open/:subject/:catalog_nbr/:ssr_component?', [check('subject').isLe
 });
 
 //GET a list of all public schedules
-app.get('/api/open/schedules', (req, res) => {
+app.get('/api/schedules/open', (req, res) => {
     Schedule.find({ public: true }, function(err, schedules) {
         res.send(schedules);
     }).sort({ updatedAt: -1 })
@@ -190,7 +190,7 @@ app.get('/api/open/schedules', (req, res) => {
 
 //GET a given schedule - we defined schedule names to be maximum 20 characters on the front end, so we keep this info for the backend, just in case anything manages
 //to get past the front end validation.
-app.get('/api/secure/schedules/:schedule_name/:user', [check('schedule_name').isLength({ max: 20 })], checkToken, (req, res) => {
+app.get('/api/schedules/secure/:schedule_name/:user', [check('schedule_name').isLength({ max: 20 })], checkToken, (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         console.log(errors);
@@ -208,7 +208,7 @@ app.get('/api/secure/schedules/:schedule_name/:user', [check('schedule_name').is
 })
 
 //DELETE a given schedule
-app.delete('/api/secure/schedules/:schedule_name/:user', [check('schedule_name').isLength({ max: 20 })], checkToken, (req, res) => {
+app.delete('/api/schedules/secure/:schedule_name/:user', [check('schedule_name').isLength({ max: 20 })], checkToken, (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         console.log(errors);
@@ -227,7 +227,7 @@ app.delete('/api/secure/schedules/:schedule_name/:user', [check('schedule_name')
 });
 
 //DELETE all schedules for one user
-app.delete('/api/secure/schedules', checkToken, (req, res) => {
+app.delete('/api/schedules/secure', checkToken, (req, res) => {
     Schedule.deleteMany({ user: req.body.username }, function(err, schedules) {
         if (err) {
             res.status(err);
@@ -238,7 +238,7 @@ app.delete('/api/secure/schedules', checkToken, (req, res) => {
 
 
 // POST a new schedule if that schedule name doesn't already exist.
-app.post('/api/secure/schedules', [check('name').isLength({ max: 20 })], checkToken, scheduleLimit, (req, res, next) => {
+app.post('/api/schedules/secure', [check('name').isLength({ max: 20 })], checkToken, scheduleLimit, (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         console.log(errors);
