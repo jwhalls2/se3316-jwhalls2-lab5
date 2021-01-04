@@ -38,7 +38,11 @@ export class CourseListComponent implements OnInit {
     }
     const key = keyword.toUpperCase();
     this.coursesService.getCourseByKey(key)
-    .subscribe(courses => this.courses = courses);
+    .subscribe(courses => {
+      this.courses = courses},
+      err => {
+        alert("No course found that match specified keyword!")
+      });
   }
 
   getFilteredCourses(subject: string, catalog_nbr: string, ssr_component: string): void{

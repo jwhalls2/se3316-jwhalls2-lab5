@@ -1,3 +1,4 @@
+<h2>Sign Up!</h2>
 <form #signupForm="ngForm" (submit)="submitForm(signupForm)">
     <input type="text" name="name" id="name" placeholder="Enter Full Name" required ngModel><br><br>
     <input type="text" name="username" id="username" placeholder="Enter Username" required ngModel><br><br>
@@ -7,5 +8,5 @@
     <hr>
     <p>OR</p>
     <button (click)="google()">Sign Up With Google</button>
-    <p>Already have an Account? <a routerLink="/login">Log In</a></p>
+    <p>Already registered? <a routerLink="/signin">Sign In Here!</a></p>
 </form>

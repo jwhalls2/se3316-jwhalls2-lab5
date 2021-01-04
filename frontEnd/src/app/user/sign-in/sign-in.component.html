@@ -1,0 +1,6 @@
+<h2>Sign In!</h2>
+<form #signinForm="ngForm" (submit)="submitForm(signinForm)">
+    <input type="text" name="email" id="email" placeholder="Enter Email Address" required ngModel><br><br>
+    <input type="password" name="password" id="password" placeholder="Enter Password" required ngModel><br><br>
+    <button class="signinButton">Sign In</button>
+</form>

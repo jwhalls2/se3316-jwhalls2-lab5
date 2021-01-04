@@ -9,6 +9,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { HomePageComponent } from './home-page/home-page.component';
 import { UserComponent } from './user/user.component';
 import { SignUpComponent } from './user/sign-up/sign-up.component';
+import { SignInComponent } from './user/sign-in/sign-in.component';
 import {RouterModule} from '@angular/router';
 import { routes } from './app-routing.module';
 
@@ -19,6 +20,7 @@ import { routes } from './app-routing.module';
     SchedulesComponent,
     UserComponent,
     SignUpComponent,
+    SignInComponent,
     HomePageComponent
   ],
   imports: [

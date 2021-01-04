@@ -42,7 +42,11 @@ export class SchedulesComponent implements OnInit {
     const name = schedule_name.replace(/<[^>]*>?/gm, '');
     
     this.schedulesService.getSchedule(name)
-    .subscribe(schedules => this.schedules = schedules);
+    .subscribe(schedules => {
+      this.schedules = schedules},
+      err => {
+        alert("Schedule does not exist!")
+      });
     
   }
 
@@ -71,8 +75,8 @@ export class SchedulesComponent implements OnInit {
 
     this.getSchedules();
 
-    if(this.schedules.length > 10){
-      alert("You have 10 existing schedules! Please edit one of your existing schedules!");
+    if(this.schedules.length > 20){
+      alert("You have 20 existing schedules! Please edit one of your existing schedules!");
       return;
     }
     for(var i = 0; i < this.schedules.length; i++){
