@@ -6,6 +6,7 @@ import { SchedulesComponent } from './schedules/schedules.component';
 import { SignUpComponent } from './user/sign-up/sign-up.component';
 import { UserComponent } from './user/user.component';
 import { SignInComponent } from './user/sign-in/sign-in.component';
+import { AuthGuard } from './auth/auth.guard';
 
 export const routes: Routes = [
   { path: 'course-list', component: CourseListComponent },
@@ -13,7 +14,7 @@ export const routes: Routes = [
 children: [{path: '', component: SignUpComponent}]},
 {path: 'signin', component: UserComponent,
 children: [{path: '', component: SignInComponent}]},
-  { path: 'schedules', component: SchedulesComponent },
+  { path: 'schedules', component: SchedulesComponent, canActivate: [AuthGuard] },
   { path: 'home-page', component: HomePageComponent },
   { path: '', redirectTo: '/home-page', pathMatch: 'full' }
 ];
