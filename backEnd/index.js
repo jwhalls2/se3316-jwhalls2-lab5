@@ -204,7 +204,8 @@ app.get('/api/schedules/secure/:schedule_name/:user', [check('schedule_name').is
             res.status(404).json("Could not find schedule!");
         } else {
             console.log(schedule);
-            res.send(schedule);
+            const array = [schedule];
+            res.send(array);
         }
     })
 })
@@ -261,6 +262,7 @@ app.post('/api/schedules/secure', [check('name').isLength({ max: 20 })], checkTo
                         res.status(400).json("This schedule name already exists!");
                     } else {
                         console.log(scheduleData.name + " Was sent to be added");
+                        console.log(schedule);
                         schedule.save((err, schedule) => {
                             if (err) {
                                 res.status(400).json(err);

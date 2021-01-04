@@ -59,7 +59,8 @@ export class SchedulesService {
   }
 
   createSchedule(newSchedule: Schedule){
-    return this.http.post<Schedule>(this.scheduleUrl, newSchedule, this.httpOptions);
+    const url = `${this.scheduleUrl}/secure`
+    return this.http.post<Schedule>(url, newSchedule, this.httpOptions);
   }
 
   updateSchedule(updatedSchedule: Schedule){

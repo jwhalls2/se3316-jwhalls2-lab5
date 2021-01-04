@@ -17,7 +17,8 @@ export class SchedulesComponent implements OnInit {
   newSchedule: Schedule;
   updatedSchedule: Schedule;
   currentUser = this.userService.selectedUser;
-
+  
+  publicDef: string;
   scheduleName: string;
   schedule_name: string;
   delete_schedule_name: string;
@@ -46,7 +47,7 @@ export class SchedulesComponent implements OnInit {
     const name = schedule_name.replace(/<[^>]*>?/gm, '');
     
     this.schedulesService.getSchedule(name, this.currentUser.username)
-    .subscribe(schedules => {
+    .subscribe(schedules => {      
       this.schedules = schedules},
       err => {
         alert(err.error.message);
@@ -64,7 +65,7 @@ export class SchedulesComponent implements OnInit {
     this.schedulesService.deleteAllSchedules().subscribe();
   }
 
-  createSchedule(scheduleName: string): void{
+  createSchedule(scheduleName: string, publicDef: string): void{
     scheduleName = scheduleName.trim();
     scheduleName = scheduleName.replace(/<[^>]*>?/gm, '');
     if(scheduleName.length > 15 || scheduleName.length < 1){
@@ -75,21 +76,19 @@ export class SchedulesComponent implements OnInit {
       name: scheduleName,
       subject: [],
       course_code: [],
+      public: false,
       user: this.currentUser.username
     }
-
-    this.getSchedules();
-
-    if(this.schedules.length > 20){
-      alert("You have 20 existing schedules! Please edit one of your existing schedules!");
+    if(publicDef.length < 1){
+      alert("Please type 'public' or 'private' to choose for your schedule!")
+      return;
+    } else if(publicDef == "public"){
+      newSchedule.public = true;
+    } else if(publicDef != "private"){
+      alert("Please type 'public' or 'private' to choose for your schedule");
       return;
     }
-    for(var i = 0; i < this.schedules.length; i++){
-      if(scheduleName === this.schedules[i].name){
-        alert("This schedule already exists!");
-        return;
-      }
-    }
+
     this.schedulesService.createSchedule(newSchedule)
     .subscribe(newSchedule => {
       this.schedules.push(newSchedule);
@@ -137,6 +136,7 @@ updateSchedule(editScheduleName: string, editScheduleNumber: number,
     name: editScheduleName,
     subject: [],
     course_code: [],
+    public: false,
     user: this.currentUser.username
   }
 
