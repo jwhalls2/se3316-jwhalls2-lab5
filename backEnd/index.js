@@ -371,6 +371,7 @@ app.get('/api/secure/allReviews', (req, res) => {
         if (err) {
             return console.error(err);
         } else {
+            console.log(review);
             res.send(review);
         }
     });
@@ -402,6 +403,9 @@ app.post("/api/secure/review", checkToken, (req, res, next) => {
 
     if (!req.body.rating) {
         res.status(400).send("What is your rating for this course?");
+    }
+    if (!req.body.createdBy) {
+        res.status(400).send("Must be signed in to create a review!");
     }
 
     if (!req.body.comment) {

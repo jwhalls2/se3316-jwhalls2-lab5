@@ -20,3 +20,15 @@
 <button (click)="submitReview(title.value, courseId.value, rating.value, hiddenVal.value, comment.value)">Submit Review</button><br><br>
 
 <h3>Public Reviews: </h3>
+<button (click)="getAllReviews()">See public reviews!</button>
+<br>
+<ul class="reviews">
+    <li *ngFor="let review of reviewsArray">
+        <br>{{review.title}}:
+        <br>{{review.courseId}}
+        <br>{{review.rating}}
+        <br>{{review.comment}}
+        <br>{{review.createdBy}}
+        <hr>
+    </li>
+</ul>

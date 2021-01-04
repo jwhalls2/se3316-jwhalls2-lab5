@@ -14,7 +14,7 @@ export class ReviewService {
   }
 
   getAllReviews(){
-    return this.http.get<[]>(this.reviewUrl + '/secure/reviews');
+    return this.http.get<[]>(this.reviewUrl + '/secure/allReviews');
   }
 
   getReview(title:string){

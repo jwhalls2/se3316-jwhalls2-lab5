@@ -13,6 +13,7 @@ export class ReviewsComponent implements OnInit {
 
   
   currentUser = this.userService.selectedUser;
+  reviewsArray = new Array;
 
   constructor(private userService: UserService, private reviewService:ReviewService) { }
 
@@ -47,9 +48,14 @@ export class ReviewsComponent implements OnInit {
     alert("Please enter some comments for the course.");
   }
   else{
-    this.reviewService.addNewReview(formData).subscribe(data=>console.log(data));
+    this.reviewService.addNewReview(formData).subscribe(data=>{console.log(data)}, err => {alert(err)});
     alert(`Your review was successfully submitted.`);
     
  }
+  }
+
+  getAllReviews() {
+    this.reviewService.getAllReviews().subscribe(data => this.reviewsArray = data,);
+    console.log("Reviews array: " + this.reviewsArray);
   }
 }
