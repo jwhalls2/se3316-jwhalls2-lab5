@@ -9,6 +9,7 @@ import { SignInComponent } from './user/sign-in/sign-in.component';
 import { AuthGuard } from './auth/auth.guard';
 import { ReviewsComponent } from './reviews/reviews/reviews.component'
 import { AdminComponent } from './admin/admin/admin.component';
+import { ChangePasswordComponent } from './change-password/change-password.component';
 
 export const routes: Routes = [
   { path: 'course-list', component: CourseListComponent },
@@ -20,6 +21,7 @@ children: [{path: '', component: SignInComponent}]},
   { path: 'home-page', component: HomePageComponent },
   { path: 'reviews', component: ReviewsComponent },
   { path: 'admin', component: AdminComponent },
+  { path: 'changePassword', component: ChangePasswordComponent },
   { path: '', redirectTo: '/home-page', pathMatch: 'full' }
 ];
 

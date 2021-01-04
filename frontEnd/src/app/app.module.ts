@@ -18,6 +18,7 @@ import { UserProfileComponent } from './user-profile/user-profile/user-profile.c
 import { ReviewsComponent } from './reviews/reviews/reviews.component';
 import { AdminComponent } from './admin/admin/admin.component';
 import { ViewPoliciesComponent } from './view-policies/view-policies.component';
+import { ChangePasswordComponent } from './change-password/change-password.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { ViewPoliciesComponent } from './view-policies/view-policies.component';
     UserProfileComponent,
     ReviewsComponent,
     AdminComponent,
-    ViewPoliciesComponent
+    ViewPoliciesComponent,
+    ChangePasswordComponent
   ],
   imports: [
     BrowserModule,

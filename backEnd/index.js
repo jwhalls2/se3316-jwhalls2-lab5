@@ -1,4 +1,5 @@
 const express = require('express');
+const bcrypt = require('bcrypt');
 const app = express();
 const port = 3000;
 const fs = require('fs');
@@ -504,6 +505,29 @@ app.put("/api/admin/user", checkToken, function(req, res, next) {
             });
         });
     }
+});
+
+//route for users to change their password
+app.put('/api/secure/changePassword/:username', checkToken, (req, res) => {
+    let password = req.body.password;
+    console.log(password);
+    let salt = bcrypt.genSaltSync(10);
+    let hash = bcrypt.hashSync(password, salt);
+    console.log(hash);
+    req.body.password = hash;
+
+    password = hash;
+    if (password == "") {
+        res.status(400).send("No password!");
+    } else {
+        User.findOneAndUpdate({ username: req.params.username }, req.body).then(function() {
+            User.findOne({ username: req.params.username }).then(function(foundUser) {
+                console.log(password);
+                res.send(foundUser);
+            });
+        });
+    }
+
 });
 
 // Installing router at the address /api/courseData
