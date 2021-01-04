@@ -3,10 +3,10 @@
 <label>Change User options: </label>
 <label>Username: 
     <input #username type="text" placeholder="User's username" ><br><br>
-    <input #activate type="text" placeholder="Activate user? 'true' or 'false'" ><br><br>
+    <input #activateInput type="text" placeholder="Activate user? 'true' or 'false'" ><br><br>
     <input #admin type="text" placeholder="Make user admin? 'true' or 'false'" ><br><br>
 </label>
-<button (click)="changeUser(username.value, activate.value, admin.value)">Change!</button>
+<button (click)="changeUser(username.value, activateInput.value, admin.value)">Change!</button>
 
 <label>Change Review "Hidden" option: </label>
 <label>Unique Title: 

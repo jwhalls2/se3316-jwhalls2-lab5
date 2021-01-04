@@ -45,14 +45,14 @@ export class AdminComponent implements OnInit {
 
   }
 
-  changeUser(username: string, activate: string, admin: string){
+  changeUser(username: string, activateInput: string, admin: string){
 
-    let activated;
+    let activePass = false;
     let administrator;
-    if(activate == "true"){
-      activated = true;
+    if(activateInput == "true"){
+      activePass = true;
     } else{
-      activated == false;
+      activePass = false;
     }
 
     if(admin == "true"){
@@ -64,9 +64,10 @@ export class AdminComponent implements OnInit {
     const userData = {
       adminName: this.currentUser.username,
       username: username,
-      activate: activated,
+      activated: activePass,
       admin: administrator
     }
+    console.log(userData);
     this.adminService.changeUser(userData).subscribe();
     alert("Changed user!");
 

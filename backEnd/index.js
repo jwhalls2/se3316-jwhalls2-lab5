@@ -317,6 +317,9 @@ app.put('/api/schedules/secure', [check('name').isLength({ max: 20 })], checkTok
 app.post('/api/login', (req, res) => {
     passport.authenticate('local', (err, user, info) => {
         console.log(user);
+        if (user.activated == false) {
+            "Your account has been deactivated. Please contact an administrator to have them fix this before you can log back in."
+        }
         // error from passport middleware
         if (err) return res.status(400).json(err);
         // registered user
@@ -479,7 +482,7 @@ app.put('/api/admin/reviews', checkToken, function(req, res, next) {
 //Allows admin to update a user's account (admin/active/deactive)
 app.put("/api/admin/user", checkToken, function(req, res, next) {
 
-    console.log(req.body.adminName)
+    console.log(req.body);
     User.findOne({ username: req.body.adminName }, function(err, user) {
 
         if (!user) {
@@ -489,11 +492,11 @@ app.put("/api/admin/user", checkToken, function(req, res, next) {
             res.send({ message: "You are not an administrator!" });
         }
     })
-    if (req.body.admin == '') {
+    if (req.body.admin == null) {
         res.status(400).send("Invalid! Choose true or false to let user be admin or not.");
     }
 
-    if (req.body.activated == '') {
+    if (req.body.activated == null) {
         res.status(400).send("Invalid! Choose true or false to deactivate user account!");
     } else {
         User.findOneAndUpdate({ username: req.body.username }, req.body).then(function() {

@@ -16,6 +16,7 @@ export class AdminService {
   }
 
   editReview(reviewData: any){
+    console.log("Here is the data being sent: ");
     console.log(reviewData);
     return this.http.put<[]>(this.adminUrl + `/admin/reviews`, reviewData);
   }
