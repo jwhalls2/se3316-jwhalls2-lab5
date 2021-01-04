@@ -318,10 +318,10 @@ app.post('/api/login', (req, res) => {
     passport.authenticate('local', (err, user, info) => {
         console.log(user);
         if (user.activated == false) {
-            "Your account has been deactivated. Please contact an administrator to have them fix this before you can log back in."
+            res.status(400).send("Your account has been deactivated. Please contact an administrator to have them fix this before you can log back in.");
         }
         // error from passport middleware
-        if (err) return res.status(400).json(err);
+        else if (err) return res.status(400).json(err);
         // registered user
         else if (user) return res.status(200).json({ "token": user.generateJwt(), "user": user });
         // unknown user or wrong password

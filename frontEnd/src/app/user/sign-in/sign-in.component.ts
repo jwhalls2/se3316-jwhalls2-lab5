@@ -44,7 +44,7 @@ export class SignInComponent implements OnInit {
     },
     err =>{
         this.serverErrorMessages = err.error.message;
-        alert(this.serverErrorMessages);
+        alert("Your account has been deactivated, please contact an administrator to fix this issue.");
     })
  }
 }
