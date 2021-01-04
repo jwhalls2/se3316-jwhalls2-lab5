@@ -1,27 +1,11 @@
-<form #signUpForm="ngForm" (ngSubmit)="signUpForm.valid && onSubmit(signUpForm)">
-    <input type="text" #username="ngModel" [(ngModel)]="userService.selectedUser.username" name="username" placeholder="Full Name" required [ngClass]="{'invalid-textbox' :signUpForm.submitted && !username.valid }">
-    <div *ngIf="signUpForm.submitted && !username.valid">
-        <label class="validation-message">This field is required.</label>
-    </div>
-    <input type="text" #email="ngModel" [(ngModel)]="userService.selectedUser.email" name="email" placeholder="Email" required [pattern]="emailRegex" [ngClass]="{'invalid-textbox' :signUpForm.submitted && !email.valid }">
-    <div *ngIf="signUpForm.submitted && email.errors">
-        <label *ngIf="email.errors.required" class="validation-message">This field is required.</label>
-        <label *ngIf="email.errors.pattern" class="validation-message">Invalid email address.</label>
-    </div>
-    <input type="password" #password="ngModel" [(ngModel)]="userService.selectedUser.password" name="password" placeholder="Password" minlength="4" required [ngClass]="{'invalid-textbox' :signUpForm.submitted && !password.valid }">
-    <div *ngIf="signUpForm.submitted && password.errors">
-        <label *ngIf="password.errors.required" class="validation-message">This field is required.</label>
-        <label *ngIf="password.errors.minlength" class="validation-message">Enter atleast 4 characters.</label>
-    </div>
-    <input type="submit" value="Sign Up">
+<form #signupForm="ngForm" (submit)="submitForm(signupForm)">
+    <input type="text" name="name" id="name" placeholder="Enter Full Name" required ngModel><br><br>
+    <input type="text" name="username" id="username" placeholder="Enter Username" required ngModel><br><br>
+    <input type="text" name="email" id="email" placeholder="Enter Email Address" required ngModel><br><br>
+    <input type="password" name="password" id="password" placeholder="Enter Password" required ngModel><br><br>
+    <button class="signupButton">Create Account</button>
+    <hr>
+    <p>OR</p>
+    <button (click)="google()">Sign Up With Google</button>
+    <p>Already have an Account? <a routerLink="/login">Log In</a></p>
 </form>
-
-<!-- Success message -->
-<div class="success" *ngIf="showSucessMessage">
-    Saved successfully
-</div>
-
-<!-- Error message -->
-<div class="alert" *ngIf="serverErrorMessages">
-    {{serverErrorMessages}}
-</div>

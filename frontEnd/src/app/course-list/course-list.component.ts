@@ -59,17 +59,21 @@ export class CourseListComponent implements OnInit {
     }
 
     if(sub.length > 8 || cat.length > 5 || comp.length > 3){
-      alert("Search guidelines are invalid! Please fill boxes with valid search parameters!");
+      alert("Search guidelines are invalid! Ensure: Subject = 8 characters maximum, course code = 5 characters maximum, and component = 3 characters maximum!");
       return;
     }
     this.coursesService.getFilteredCourses(sub, cat, comp)
-    .subscribe(courses => this.courses = courses);
+    .subscribe(courses => {
+      this.courses = courses
+    }, err => {
+      alert("Could not find specified course! Check your search requirements!")
+    });
   }
 
   getCoursesBySubject(subject: string): void{
     const sub = subject;
     if(sub.length > 8){
-      alert("Search guidelines are invalid! Please fill boxes with valid search parameters!");
+      alert("Subjects are 8 characters maximum! Please fill boxes with valid search parameters!");
       return;
     }
     this.coursesService.getCoursesBySubject(sub)
@@ -79,7 +83,7 @@ export class CourseListComponent implements OnInit {
   getCoursesByNumber(catalog_nbr: string): void{
     const cat = catalog_nbr;
     if(cat.length > 5){
-      alert("Search guidelines are invalid! Please fill boxes with valid search parameters!");
+      alert("Course Codes are 5 characters maximum! Please fill boxes with valid search parameters!");
       return;
     }
     this.coursesService.getCoursesByNumber(cat)
