@@ -29,7 +29,7 @@ export class UserService {
   }
 
   getUserProfile() {
-    return this.http.get(environment.apiBaseUrl + '/userProfile');
+    return this.http.get<User[]>(environment.apiBaseUrl + `/secure/user`);
   }
 
 

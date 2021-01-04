@@ -12,6 +12,7 @@ export class SignInComponent implements OnInit {
   emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   showSucessMessage: boolean;
   serverErrorMessages: string;
+  username: string;
 
   constructor(private userService: UserService, private router: Router) { }
 
@@ -37,6 +38,7 @@ export class SignInComponent implements OnInit {
     
     this.userService.login(form.value).subscribe(res => {
         this.userService.setToken(res['token']);
+        console.log(res);
         alert("Sign in successful! Redirecting!");
         this.router.navigateByUrl('/course-list');
     },

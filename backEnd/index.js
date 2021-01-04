@@ -312,6 +312,7 @@ app.put('/api/secure/schedules', [check('name').isLength({ max: 20 })], checkTok
 //Post for login
 app.post('/api/login', (req, res) => {
     passport.authenticate('local', (err, user, info) => {
+        console.log(user);
         // error from passport middleware
         if (err) return res.status(400).json(err);
         // registered user
@@ -346,6 +347,19 @@ app.post('/api/register', (req, res, next) => {
 
     });
 })
+
+//Returns the given user's information to be displayed.
+app.get("/secure/user/:username", (req, res) => {
+
+    User.findOne({ username: req.params.username }, function(err, user) {
+        if (err) {
+            console.error(err);
+            res.status(400).send(`User ${req.params.username} was not found!`);
+        } else {
+            res.send(user);
+        }
+    });
+});
 
 //Gets all of the non-hidden reviews:
 app.get('/api/secure/allReviews', (req, res) => {

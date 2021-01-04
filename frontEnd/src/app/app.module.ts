@@ -5,7 +5,7 @@ import { AppComponent } from './app.component';
 import { CourseListComponent } from './course-list/course-list.component';
 import { SchedulesComponent } from './schedules/schedules.component';
 import { AppRoutingModule } from './app-routing.module';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HomePageComponent } from './home-page/home-page.component';
 import { UserComponent } from './user/user.component';
 import { SignUpComponent } from './user/sign-up/sign-up.component';
@@ -13,6 +13,8 @@ import { SignInComponent } from './user/sign-in/sign-in.component';
 import {RouterModule} from '@angular/router';
 import { routes } from './app-routing.module';
 import { AuthGuard } from './auth/auth.guard';
+import { AuthInterceptor } from './auth/auth.interceptor';
+import { UserProfileComponent } from './user-profile/user-profile/user-profile.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +24,8 @@ import { AuthGuard } from './auth/auth.guard';
     UserComponent,
     SignUpComponent,
     SignInComponent,
-    HomePageComponent
+    HomePageComponent,
+    UserProfileComponent
   ],
   imports: [
     BrowserModule,
@@ -32,7 +35,11 @@ import { AuthGuard } from './auth/auth.guard';
     HttpClientModule,
     RouterModule.forRoot(routes)
   ],
-  providers: [AuthGuard],
+  providers: [AuthGuard, {
+    provide: HTTP_INTERCEPTORS,
+    useClass: AuthInterceptor,
+    multi: true
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
