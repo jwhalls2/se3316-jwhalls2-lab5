@@ -1,0 +1,22 @@
+<h1>Admin Controls!</h1>
+
+<label>Change Review "Hidden" option: </label>
+<label>Unique Title: 
+    <input #reviewTitle type="text" placeholder="Review Title" ><br><br>
+    <input #hiddenVal type="text" placeholder="Hide Review? Type 'yes' to hide - defaults to 'no'." ><br><br>
+</label>
+<button (click)="editReview(reviewTitle.value, hiddenVal.value)">Change!</button>
+
+<button (click)="getReviews()">See all reviews!</button>
+<br>
+<ul class="reviews">
+    <li *ngFor="let review of reviewsArray">
+        <br>Title: {{review.title}}:
+        <br>Course: {{review.courseId}}
+        <br>Rating: {{review.rating}}
+        <br>Comments: {{review.comment}}
+        <br>Made by User: {{review.createdBy}}
+        <br>Hidden: {{review.hidden}}
+        <hr>
+    </li>
+</ul>

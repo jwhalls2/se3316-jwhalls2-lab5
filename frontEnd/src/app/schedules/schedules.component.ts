@@ -85,6 +85,7 @@ export class SchedulesComponent implements OnInit {
 
   deleteAllSchedules(): void {
     this.schedulesService.deleteAllSchedules(this.currentUser.username).subscribe();
+    alert("Deleted all schedules!");
   }
 
   createSchedule(scheduleName: string, publicDef: string): void{

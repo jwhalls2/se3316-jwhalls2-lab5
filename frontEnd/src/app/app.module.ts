@@ -16,6 +16,7 @@ import { AuthGuard } from './auth/auth.guard';
 import { AuthInterceptor } from './auth/auth.interceptor';
 import { UserProfileComponent } from './user-profile/user-profile/user-profile.component';
 import { ReviewsComponent } from './reviews/reviews/reviews.component';
+import { AdminComponent } from './admin/admin/admin.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { ReviewsComponent } from './reviews/reviews/reviews.component';
     SignInComponent,
     HomePageComponent,
     UserProfileComponent,
-    ReviewsComponent
+    ReviewsComponent,
+    AdminComponent
   ],
   imports: [
     BrowserModule,

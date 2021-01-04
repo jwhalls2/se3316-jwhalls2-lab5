@@ -48,7 +48,7 @@ export class ReviewsComponent implements OnInit {
     alert("Please enter some comments for the course.");
   }
   else{
-    this.reviewService.addNewReview(formData).subscribe(data=>{console.log(data)}, err => {alert(err)});
+    this.reviewService.addNewReview(formData).subscribe(data=>console.log(data));
     alert(`Your review was successfully submitted.`);
     
  }

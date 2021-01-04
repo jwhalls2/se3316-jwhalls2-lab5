@@ -53,7 +53,6 @@ const checkToken = (req, res, next) => {
     //If the authorization header is in the headers, it includes the token number.
     if ('authorization' in req.headers)
         token = req.headers.authorization;
-    console.log(req.headers);
     if (!token)
         return res.status(403).send({ auth: false, message: 'No token provided.' });
     else {
@@ -390,10 +389,16 @@ app.post("/api/secure/review", checkToken, (req, res, next) => {
         infringing: false
     });
 
+    Review.findOne({ title: req.body.title }, function(err, review) {
+        if (review) {
+            res.status(400).send("Review with this title already exists!");
+        }
+    })
+
     if (!req.body.title) {
         res.status(400).send("You must include a title for your review");
     }
-    if (req.body.title.length > 16) {
+    if (req.body.title.length > 30) {
         res.status(400).send("This title is too long!");
     }
 
@@ -416,33 +421,58 @@ app.post("/api/secure/review", checkToken, (req, res, next) => {
                 console.error(err.message);
                 res.send(err.message);
             } else {
-                res.send(req.body);
+                res.send(JSON.stringify(review));
             }
         });
     }
 });
 
 //Allows admins to get all reviews (hidden or not).
-app.get("/api/admin/reviews", (req, res) => {
-    Review.find({}, 'title comment rating courseId hidden createdBy', function(err, review) {
-        if (err) {
-            return console.error(err);
-        } else if (req.body.admin == false) {
-            res.send({ message: "You are not an administrator!" });
+app.get("/api/admin/reviews/:username", (req, res) => {
+    User.findOne({ username: req.params.username }, function(err, user) {
+        if (user) {
+            if (user.admin == true) {
+                Review.find({}, 'title comment rating courseId hidden createdBy', function(err, review) {
+                    if (err) {
+                        return console.error(err);
+                    } else if (req.body.admin == false) {
+                        res.send({ message: "You are not an administrator!" });
+                    } else {
+                        res.send(JSON.stringify(review));
+                    }
+                });
+            } else {
+                res.status(400).send("You are not an administrator!");
+            }
+
         } else {
-            res.send(JSON.stringify(review));
+            res.status(400).send("Please sign in to access this!");
         }
-    });
+    })
+
 });
 
 //Allows admins to mark reviews as hidden
 app.put('/api/admin/reviews', checkToken, function(req, res, next) {
 
-    Review.findOneAndUpdate({ title: req.body.title }, req.body).then(function() {
-        Review.findOne({ title: req.body.title }).then(function(review) {
-            res.send(review);
-        });
-    });
+    console.log(req.body.user);
+    User.findOne({ username: req.body.user }, function(err, user) {
+        if (user) {
+            if (user.admin == true) {
+                Review.findOneAndUpdate({ title: req.body.title }, req.body).then(function() {
+                    Review.findOne({ title: req.body.title }).then(function(review) {
+                        res.send(review);
+                    });
+                });
+
+            } else {
+                res.status(400).send("You are not an administrator!");
+            }
+        } else {
+            res.status(400).send("Please sign in to access this!");
+        }
+    })
+
 });
 
 //Allows admin to update a user's account (admin/active/deactive)

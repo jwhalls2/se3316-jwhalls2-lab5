@@ -24,11 +24,11 @@
 <br>
 <ul class="reviews">
     <li *ngFor="let review of reviewsArray">
-        <br>{{review.title}}:
-        <br>{{review.courseId}}
-        <br>{{review.rating}}
-        <br>{{review.comment}}
-        <br>{{review.createdBy}}
+        <br>Title: {{review.title}}:
+        <br>Course: {{review.courseId}}
+        <br>Rating: {{review.rating}}
+        <br>Comments: {{review.comment}}
+        <br>Made by User: {{review.createdBy}}
         <hr>
     </li>
 </ul>
