@@ -1,0 +1,25 @@
+ <h1>Policies</h1>
+
+
+
+<div *ngIf="policies">
+    <div *ngFor="let policy of policies">
+        <h2>Security & Privacy:</h2>
+        <p>{{policy.policyOne}}</p>
+
+        <h2>DMCA Notice & TakeDown Policies</h2>
+        <p>{{policy.policyTwo}}</p>
+
+        <h2>Acceptable Use Policy</h2>
+        <p>{{policy.policyThree}}</p>
+    </div>
+</div>
+<br>
+<div id="contactDiv">
+    <h2>Contact for Notices of Infringement</h2>
+    <p>Contact <span>msood@uwo.ca</span> for any notices of infringement provided.</p>
+</div>
+
+<p>Source for Security and Privacy Policy: <a href="https://www.termsfeed.com/blog/sample-privacy-policy-template/">https://www.termsfeed.com/blog/sample-privacy-policy-template/</a></p>
+<p>Source for DMCA Policy: <a href="https://creativecommons.org/dmca/"></a>https://creativecommons.org/dmca/</p>
+<p>Source for Acceptable Use Policy:<a href="https://www.privacypolicies.com/blog/acceptable-use-policy-template/"></a>https://www.privacypolicies.com/blog/acceptable-use-policy-template/.</p>

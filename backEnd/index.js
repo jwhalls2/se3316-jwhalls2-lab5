@@ -482,25 +482,28 @@ app.put("/api/admin/user", checkToken, function(req, res, next) {
     User.findOne({ username: req.body.adminName }, function(err, user) {
 
         if (!user) {
-            res.status(404).send({ message: `No user by name ${req.params.username}!` })
+            res.status(404).send({ message: `No user by name ${req.body.adminName}!` })
         }
         if (!user.admin) {
             res.send({ message: "You are not an administrator!" });
         }
-
-        console.log(`Making ${req.body.username} an admin!`);
-
-        User.findOne({ username: req.body.username }, function(err, updateUser) {
-            if (!updateUser) {
-                res.status(404).json("This user does not exist!");
-            } else {
-                updateUser.admin = req.body.admin;
-                updateUser.activated = req.body.activated;
-            }
-
-            res.send(updateUser);
-        })
     })
+    if (req.body.admin == '') {
+        res.status(400).send("Invalid! Choose true or false to let user be admin or not.");
+    }
+
+    if (req.body.activated == '') {
+        res.status(400).send("Invalid! Choose true or false to deactivate user account!");
+    } else {
+        User.findOneAndUpdate({ username: req.body.username }, req.body).then(function() {
+            User.findOne({ username: req.body.username }).then(function(user, err) {
+                if (err) {
+                    res.send(err);
+                }
+                res.send(JSON.stringify(user));
+            });
+        });
+    }
 });
 
 // Installing router at the address /api/courseData

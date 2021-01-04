@@ -1,12 +1,20 @@
 <h1>Admin Controls!</h1>
 
+<label>Change User options: </label>
+<label>Username: 
+    <input #username type="text" placeholder="User's username" ><br><br>
+    <input #activate type="text" placeholder="Activate user? 'true' or 'false'" ><br><br>
+    <input #admin type="text" placeholder="Make user admin? 'true' or 'false'" ><br><br>
+</label>
+<button (click)="changeUser(username.value, activate.value, admin.value)">Change!</button>
+
 <label>Change Review "Hidden" option: </label>
 <label>Unique Title: 
     <input #reviewTitle type="text" placeholder="Review Title" ><br><br>
     <input #hiddenVal type="text" placeholder="Hide Review? Type 'yes' to hide - defaults to 'no'." ><br><br>
 </label>
 <button (click)="editReview(reviewTitle.value, hiddenVal.value)">Change!</button>
-
+<br>
 <button (click)="getReviews()">See all reviews!</button>
 <br>
 <ul class="reviews">

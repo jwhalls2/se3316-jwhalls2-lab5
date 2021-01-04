@@ -45,7 +45,30 @@ export class AdminComponent implements OnInit {
 
   }
 
-  changeUser(){
+  changeUser(username: string, activate: string, admin: string){
+
+    let activated;
+    let administrator;
+    if(activate == "true"){
+      activated = true;
+    } else{
+      activated == false;
+    }
+
+    if(admin == "true"){
+      administrator = true;
+    } else{
+      administrator = false;
+    }
+
+    const userData = {
+      adminName: this.currentUser.username,
+      username: username,
+      activate: activated,
+      admin: administrator
+    }
+    this.adminService.changeUser(userData).subscribe();
+    alert("Changed user!");
 
   }
 }

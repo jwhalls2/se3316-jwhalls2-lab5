@@ -19,4 +19,8 @@ export class AdminService {
     console.log(reviewData);
     return this.http.put<[]>(this.adminUrl + `/admin/reviews`, reviewData);
   }
+
+  changeUser(userData: any){
+    return this.http.put<[]>(this.adminUrl + `/admin/user`, userData);
+  }
 }
