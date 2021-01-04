@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
-
+import { Router } from '@angular/router';
 import { UserService } from '../../shared/user.service'
 
 @Component({
@@ -13,9 +13,13 @@ export class SignInComponent implements OnInit {
   showSucessMessage: boolean;
   serverErrorMessages: string;
 
-  constructor(private userService: UserService) { }
+  constructor(private userService: UserService, private router: Router) { }
 
   ngOnInit() {
+  }
+
+  google(){
+    window.location.href='https://accounts.google.com/ServiceLogin/signinchooser?elo=1&flowName=GlifWebSignIn&flowEntry=ServiceLogin';
   }
 
   submitForm(form){
@@ -26,8 +30,20 @@ export class SignInComponent implements OnInit {
  else if(form.value.password.length < 1){
     alert("Please enter a password!");
  }
+ else if(!(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(form.value.email))){
+    alert("Invalid Email Address");
+  }
  else{
-     console.log("Will log in now!")
+    
+    this.userService.login(form.value).subscribe(res => {
+        this.userService.setToken(res['token']);
+        alert("Sign in successful! Redirecting!");
+        this.router.navigateByUrl('/course-list');
+    },
+    err =>{
+        this.serverErrorMessages = err.error.message;
+        alert(this.serverErrorMessages);
+    })
  }
 }
 }

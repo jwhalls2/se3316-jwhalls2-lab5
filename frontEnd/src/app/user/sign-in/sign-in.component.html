@@ -3,4 +3,7 @@
     <input type="text" name="email" id="email" placeholder="Enter Email Address" required ngModel><br><br>
     <input type="password" name="password" id="password" placeholder="Enter Password" required ngModel><br><br>
     <button class="signinButton">Sign In</button>
+    <button (click)="google()">Sign in With Google</button>
+    <hr>
+    <p>New user? <a routerLink="/signup">Create Account</a></p>
 </form>
