@@ -50,7 +50,7 @@ export class SchedulesComponent implements OnInit {
     .subscribe(schedules => {      
       this.schedules = schedules},
       err => {
-        alert(err.error.message);
+        alert("Could not find the requested schedule!");
       });
     
   }
@@ -58,11 +58,11 @@ export class SchedulesComponent implements OnInit {
   deleteSchedule(delete_schedule_name: string): void{
     const name = delete_schedule_name.replace(/<[^>]*>?/gm, '');
 
-    this.schedulesService.deleteSchedule(name).subscribe();
+    this.schedulesService.deleteSchedule(name, this.currentUser.username).subscribe();
   }
 
   deleteAllSchedules(): void {
-    this.schedulesService.deleteAllSchedules().subscribe();
+    this.schedulesService.deleteAllSchedules(this.currentUser.username).subscribe();
   }
 
   createSchedule(scheduleName: string, publicDef: string): void{

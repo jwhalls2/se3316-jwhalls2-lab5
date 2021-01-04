@@ -230,8 +230,8 @@ app.delete('/api/schedules/secure/:schedule_name/:user', [check('schedule_name')
 });
 
 //DELETE all schedules for one user
-app.delete('/api/schedules/secure', checkToken, (req, res) => {
-    Schedule.deleteMany({ user: req.body.username }, function(err, schedules) {
+app.delete('/api/schedules/secure/:user', checkToken, (req, res) => {
+    Schedule.deleteMany({ user: req.params.user }, function(err, schedules) {
         if (err) {
             res.status(err);
         }

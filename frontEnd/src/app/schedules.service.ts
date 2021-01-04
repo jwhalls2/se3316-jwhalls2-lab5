@@ -46,16 +46,16 @@ export class SchedulesService {
     
   }
 
-  deleteSchedule(delete_schedule_name: string): Observable<Schedule[]>{
-    const url = `${this.scheduleUrl}/secure/${delete_schedule_name}`;
+  deleteSchedule(delete_schedule_name: string, username: string): Observable<Schedule[]>{
+    const url = `${this.scheduleUrl}/secure/${delete_schedule_name}/${username}`;
     return this.http.delete<Schedule[]>(url).pipe(
       catchError(this.handleError<Schedule[]>('deleteSchedule', []))
     );
   }
 
-  deleteAllSchedules(): Observable<Schedule[]>{
-    const url = `${this.scheduleUrl}/secure`
-    return this.http.delete<Schedule[]>(this.scheduleUrl);
+  deleteAllSchedules(username: string): Observable<Schedule[]>{
+    const url = `${this.scheduleUrl}/secure/${username}`
+    return this.http.delete<Schedule[]>(url);
   }
 
   createSchedule(newSchedule: Schedule){
