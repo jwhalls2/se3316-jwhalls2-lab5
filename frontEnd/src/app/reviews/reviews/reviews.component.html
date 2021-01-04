@@ -1,0 +1,22 @@
+<h1>Reviews!</h1>
+
+<h2 id="addTitle">Post a Course Review</h2>
+
+<label>Enter Review Title</label>
+<input #title type="text" formControlName="title" placeholder="Review Title" required id="reviewTitleInput"><br><br>
+
+<label>Enter Course Id</label>
+<input #courseId type="text" formControlName="courseId" placeholder="Enter Course Id" required id="courseIdInput"><br><br>
+
+<label>Enter Course Rating</label>
+<input #rating type="text " formControlName="rating " placeholder="Rating Number " required id="ratingNumberInput "><br><br>
+
+<label>Hidden review? Type "yes" or "no" (defaults to no): </label>
+<input #hiddenVal type="text" formControlName="hiddenVal" placeholder="Hidden?" required id="hiddenValInput"><br><br>
+
+<label id="textareaLabel ">Comments:</label>
+<textarea #comment formControlName="comment " rows="4 " cols="84 " placeholder="Enter Comments about the course here... " id="textarea " required></textarea><br><br>
+
+<button (click)="submitReview(title.value, courseId.value, rating.value, hiddenVal.value, comment.value)">Submit Review</button><br><br>
+
+<h3>Public Reviews: </h3>

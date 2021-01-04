@@ -15,6 +15,7 @@ import { routes } from './app-routing.module';
 import { AuthGuard } from './auth/auth.guard';
 import { AuthInterceptor } from './auth/auth.interceptor';
 import { UserProfileComponent } from './user-profile/user-profile/user-profile.component';
+import { ReviewsComponent } from './reviews/reviews/reviews.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { UserProfileComponent } from './user-profile/user-profile/user-profile.c
     SignUpComponent,
     SignInComponent,
     HomePageComponent,
-    UserProfileComponent
+    UserProfileComponent,
+    ReviewsComponent
   ],
   imports: [
     BrowserModule,

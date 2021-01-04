@@ -7,6 +7,7 @@ import { SignUpComponent } from './user/sign-up/sign-up.component';
 import { UserComponent } from './user/user.component';
 import { SignInComponent } from './user/sign-in/sign-in.component';
 import { AuthGuard } from './auth/auth.guard';
+import { ReviewsComponent } from './reviews/reviews/reviews.component'
 
 export const routes: Routes = [
   { path: 'course-list', component: CourseListComponent },
@@ -16,6 +17,7 @@ children: [{path: '', component: SignUpComponent}]},
 children: [{path: '', component: SignInComponent}]},
   { path: 'schedules', component: SchedulesComponent, canActivate: [AuthGuard] },
   { path: 'home-page', component: HomePageComponent },
+  { path: 'reviews', component: ReviewsComponent },
   { path: '', redirectTo: '/home-page', pathMatch: 'full' }
 ];
 

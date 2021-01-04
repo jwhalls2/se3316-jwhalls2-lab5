@@ -384,12 +384,10 @@ app.post("/api/secure/review", checkToken, (req, res, next) => {
         courseId: req.body.courseId,
         rating: req.body.rating,
         comment: req.body.comment,
-        hidden: false,
+        hidden: req.body.hidden,
         createdBy: req.body.createdBy,
         infringing: false
     });
-
-    console.log(review);
 
     if (!req.body.title) {
         res.status(400).send("You must include a title for your review");
@@ -415,7 +413,6 @@ app.post("/api/secure/review", checkToken, (req, res, next) => {
                 res.send(err.message);
             } else {
                 res.send(req.body);
-                console.log('Review Created Sucessfully');
             }
         });
     }
