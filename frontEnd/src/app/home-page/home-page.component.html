@@ -5,3 +5,19 @@
     <br>Search through our course list to find out.
     <br>Then travel to our "Schedules" page to begin creating your personal schedules!
 </P>
+
+<h3>Public Course Lists</h3>
+<ul class="schedules">
+    <li *ngFor="let schedule of schedules" (click)="ele.class = ele.class == 'showChildren' ? '' :  'showChildren'" [ngClass]="{ hideChildren : ele.class !== 'showChildren' }" #ele>
+        <span>{{schedule.name}}: </span> {{ele.ngClass}}
+        <div>
+            <p *ngFor="let subject of schedule.subject; index as j; first as isFirst">
+                <span class="scheduleList"> {{schedule.subject[j]}} {{schedule.course_code[j]}} - "{{courses[j].className}}" {{courses[j].course_info[0].class_section}} ({{courses[j].course_info[0].ssr_component}})
+                    <br>{{courses[j].course_info[0].days}} at {{courses[j].course_info[0].start_time}} - {{courses[j].course_info[0].end_time}}</span>
+            </p>
+            <br> Description: {{schedule.description}}
+            <br> Created By: {{schedule.user}}
+        </div>
+
+    </li>
+</ul>
