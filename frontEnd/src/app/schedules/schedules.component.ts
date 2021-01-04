@@ -4,6 +4,7 @@ import { SchedulesService } from '../schedules.service';
 import {Schedule} from '../schedule';
 import { ActivatedRoute } from '@angular/router';
 import {Course} from '../course';
+import { UserService } from '../shared/user.service';
 
 @Component({
   selector: 'app-schedules',
@@ -15,6 +16,7 @@ export class SchedulesComponent implements OnInit {
   schedules: Schedule[];
   newSchedule: Schedule;
   updatedSchedule: Schedule;
+  currentUser = this.userService.selectedUser;
 
   scheduleName: string;
   schedule_name: string;
@@ -26,6 +28,7 @@ export class SchedulesComponent implements OnInit {
   addCourses: Course[] = [];
 
   constructor(private location: Location,
+    private userService: UserService,
     private schedulesService: SchedulesService,
     private route: ActivatedRoute) { }
 
@@ -34,6 +37,7 @@ export class SchedulesComponent implements OnInit {
   }
 
   getSchedules(): void {
+    console.log(this.currentUser);
     this.schedulesService.getSchedules()
     .subscribe(schedules => this.schedules = schedules);
   }
@@ -41,11 +45,11 @@ export class SchedulesComponent implements OnInit {
   getSchedule(schedule_name: string): void{
     const name = schedule_name.replace(/<[^>]*>?/gm, '');
     
-    this.schedulesService.getSchedule(name)
+    this.schedulesService.getSchedule(name, this.currentUser.username)
     .subscribe(schedules => {
       this.schedules = schedules},
       err => {
-        alert("Schedule does not exist!")
+        alert(err.error.message);
       });
     
   }
@@ -70,7 +74,8 @@ export class SchedulesComponent implements OnInit {
     const newSchedule = {
       name: scheduleName,
       subject: [],
-      course_code: []
+      course_code: [],
+      user: this.currentUser.username
     }
 
     this.getSchedules();
@@ -131,7 +136,8 @@ updateSchedule(editScheduleName: string, editScheduleNumber: number,
   const updatedSchedule = {
     name: editScheduleName,
     subject: [],
-    course_code: []
+    course_code: [],
+    user: this.currentUser.username
   }
 
   console.log(editScheduleNumber);

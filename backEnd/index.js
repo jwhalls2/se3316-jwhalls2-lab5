@@ -53,6 +53,7 @@ const checkToken = (req, res, next) => {
     //If the authorization header is in the headers, it includes the token number.
     if ('authorization' in req.headers)
         token = req.headers.authorization;
+    console.log(req.headers);
     if (!token)
         return res.status(403).send({ auth: false, message: 'No token provided.' });
     else {
@@ -202,6 +203,7 @@ app.get('/api/schedules/secure/:schedule_name/:user', [check('schedule_name').is
         if (!schedule) {
             res.status(404).json("Could not find schedule!");
         } else {
+            console.log(schedule);
             res.send(schedule);
         }
     })
@@ -316,7 +318,7 @@ app.post('/api/login', (req, res) => {
         // error from passport middleware
         if (err) return res.status(400).json(err);
         // registered user
-        else if (user) return res.status(200).json({ "token": user.generateJwt() });
+        else if (user) return res.status(200).json({ "token": user.generateJwt(), "user": user });
         // unknown user or wrong password
         else return res.status(404).json(info);
     })(req, res);

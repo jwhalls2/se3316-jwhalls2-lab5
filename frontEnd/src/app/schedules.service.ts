@@ -11,10 +11,10 @@ export class SchedulesService {
 
   //Change URL back when you want to NG build.
   private scheduleUrl = 'http://localhost:3000/api/schedules';
+  private token = localStorage.getItem("token");
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
   
-      // TODO: send the error to remote logging infrastructure
       console.error(error); // log to console instead
   
       if(operation == 'getSchedule' || operation == 'deleteSchedule'){
@@ -35,15 +35,13 @@ export class SchedulesService {
   constructor(private http: HttpClient) { }
 
   getSchedules(): Observable<Schedule[]> {
-    const url = `${this.scheduleUrl}/open`
+    const url = `${this.scheduleUrl}/open`;
     return this.http.get<Schedule[]>(url);
   }
 
-  getSchedule(schedule_name: string): Observable<Schedule[]>{
-    const url = `${this.scheduleUrl}/secure/${schedule_name}`;
-    return this.http.get<Schedule[]>(url).pipe(
-      catchError(this.handleError<Schedule[]>('getSchedule', []))
-    );
+  getSchedule(schedule_name: string, username: string): Observable<Schedule[]>{
+    const url = `${this.scheduleUrl}/secure/${schedule_name}/${username}`;
+    return this.http.get<Schedule[]>(url);
 
     
   }
