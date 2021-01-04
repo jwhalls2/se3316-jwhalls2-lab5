@@ -1,0 +1,9 @@
+.hideChildren>div {
+    display: none;
+}
+
+div {
+    border: solid 1px black;
+    margin: 4px;
+    padding: 4px;
+}

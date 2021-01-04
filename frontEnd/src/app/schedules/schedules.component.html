@@ -8,12 +8,14 @@
     <button (click)="getSchedules()">Display All Schedules</button>
     <br>
     <ul class="schedules">
-        <li *ngFor="let schedule of schedules">
-            <span>{{schedule.name}}: 
+        <li *ngFor="let schedule of schedules" (click)="ele.class = ele.class == 'showChildren' ? '' :  'showChildren'" [ngClass]="{ hideChildren : ele.class !== 'showChildren' }" #ele>
+            <span>{{schedule.name}}: </span> {{ele.ngClass}}
+            <div>
                 <p *ngFor="let subject of schedule.subject; index as j; first as isFirst">
                     <span class="scheduleList"> {{schedule.subject[j]}} {{schedule.course_code[j]}} </span>
-            </p>
-            </span>
+                    <br> Description: {{schedule.description}}
+                </p>
+            </div>
 
         </li>
     </ul>
@@ -94,12 +96,16 @@
         <label> Public or private schedule?
             <input #publicUpdate/>
         </label>
+        <label> Description of schedule:
+            <input #description/>
+        </label>
         <button (click)="updateSchedule(editScheduleName.value, editScheduleNumber.value,
         subjectCode0.value, subjectCode1.value, subjectCode2.value,
         subjectCode3.value, subjectCode4.value, subjectCode5.value,
         subjectCode6.value, subjectCode7.value,
         courseCode0.value, courseCode1.value, courseCode2.value,
         courseCode3.value, courseCode4.value, courseCode5.value,
-        courseCode6.value, courseCode7.value, publicUpdate.value)">Confirm</button>
+        courseCode6.value, courseCode7.value, publicUpdate.value,
+        description.value)">Confirm</button>
     </ul>
 </div>

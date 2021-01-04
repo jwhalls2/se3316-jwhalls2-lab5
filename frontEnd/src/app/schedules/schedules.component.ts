@@ -106,7 +106,8 @@ updateSchedule(editScheduleName: string, editScheduleNumber: number,
   courseCode0 : string, courseCode1 : string,
   courseCode2 : string, courseCode3 : string,
   courseCode4 : string, courseCode5 : string,
-  courseCode6 : string, courseCode7 : string, publicUpdate: string): void{
+  courseCode6 : string, courseCode7 : string, 
+  publicUpdate: string, description: string): void{
     
 
   if(editScheduleName.length > 15 || editScheduleName.length < 1){
@@ -123,7 +124,8 @@ updateSchedule(editScheduleName: string, editScheduleNumber: number,
     subject: [],
     course_code: [],
     public: false,
-    user: this.currentUser.username
+    user: this.currentUser.username,
+    description: description
   }
   if(publicUpdate != "public" && publicUpdate != "private"){
     alert("Please type 'public' or 'private' to choose for your schedule!");
