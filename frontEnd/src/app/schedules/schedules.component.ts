@@ -85,12 +85,13 @@ export class SchedulesComponent implements OnInit {
     } else if(publicDef == "public"){
       newSchedule.public = true;
     } else if(publicDef != "private"){
-      alert("Please type 'public' or 'private' to choose for your schedule");
+      alert("Please type 'public' or 'private' to choose for your schedule!");
       return;
     }
 
     this.schedulesService.createSchedule(newSchedule)
     .subscribe(newSchedule => {
+      alert("Successfully created!");
       this.schedules.push(newSchedule);
   });
 }
@@ -105,7 +106,7 @@ updateSchedule(editScheduleName: string, editScheduleNumber: number,
   courseCode0 : string, courseCode1 : string,
   courseCode2 : string, courseCode3 : string,
   courseCode4 : string, courseCode5 : string,
-  courseCode6 : string, courseCode7 : string): void{
+  courseCode6 : string, courseCode7 : string, publicUpdate: string): void{
     
 
   if(editScheduleName.length > 15 || editScheduleName.length < 1){
@@ -115,22 +116,7 @@ updateSchedule(editScheduleName: string, editScheduleNumber: number,
   if(editScheduleNumber > 8 || editScheduleNumber < 1){
     alert("Please choose a valid number of courses!");
     return;
-  }
-
-  this.getSchedules();
-
-  for(var i= 0; i < this.schedules.length; i++){
-
-    if(editScheduleName === this.schedules[i].name){
-      break;
-      } else if(i+1 == this.schedules.length){
-        alert(`Could not find schedule ${editScheduleName}, please try another name!`);
-        return;} 
-      else{
-        continue;
-      }
-    } 
-  
+  }  
 
   const updatedSchedule = {
     name: editScheduleName,
@@ -138,6 +124,12 @@ updateSchedule(editScheduleName: string, editScheduleNumber: number,
     course_code: [],
     public: false,
     user: this.currentUser.username
+  }
+  if(publicUpdate != "public" && publicUpdate != "private"){
+    alert("Please type 'public' or 'private' to choose for your schedule!");
+    return;
+  } else if(publicUpdate == "public"){
+    updatedSchedule.public = true;
   }
 
   console.log(editScheduleNumber);
@@ -349,6 +341,11 @@ updateSchedule(editScheduleName: string, editScheduleNumber: number,
   }
 
   this.schedulesService.updateSchedule(updatedSchedule)
-  .subscribe();
+  .subscribe(res => {
+    alert("Successfully created!");
+  },
+  err => {
+    alert(err.error.message);
+  });
 }
 }

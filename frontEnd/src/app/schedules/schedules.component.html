@@ -91,12 +91,15 @@
             <input #subjectCode7 placeholder="Subject..." />
             <input #courseCode7 placeholder="Course Code..." />
         </li>
+        <label> Public or private schedule?
+            <input #publicUpdate/>
+        </label>
         <button (click)="updateSchedule(editScheduleName.value, editScheduleNumber.value,
         subjectCode0.value, subjectCode1.value, subjectCode2.value,
         subjectCode3.value, subjectCode4.value, subjectCode5.value,
         subjectCode6.value, subjectCode7.value,
         courseCode0.value, courseCode1.value, courseCode2.value,
         courseCode3.value, courseCode4.value, courseCode5.value,
-        courseCode6.value, courseCode7.value)">Confirm</button>
+        courseCode6.value, courseCode7.value, publicUpdate.value)">Confirm</button>
     </ul>
 </div>

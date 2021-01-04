@@ -278,7 +278,7 @@ app.post('/api/schedules/secure', [check('name').isLength({ max: 20 })], checkTo
 
 
 // Route that removes the document in the database with a matching name to the request sent, and then inserts the updated request body into the database.
-app.put('/api/secure/schedules', [check('name').isLength({ max: 20 })], checkToken, (req, res, next) => {
+app.put('/api/schedules/secure', [check('name').isLength({ max: 20 })], checkToken, (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         console.log(errors);
