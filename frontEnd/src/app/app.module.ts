@@ -17,6 +17,7 @@ import { AuthInterceptor } from './auth/auth.interceptor';
 import { UserProfileComponent } from './user-profile/user-profile/user-profile.component';
 import { ReviewsComponent } from './reviews/reviews/reviews.component';
 import { AdminComponent } from './admin/admin/admin.component';
+import { ViewPoliciesComponent } from './view-policies/view-policies.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { AdminComponent } from './admin/admin/admin.component';
     HomePageComponent,
     UserProfileComponent,
     ReviewsComponent,
-    AdminComponent
+    AdminComponent,
+    ViewPoliciesComponent
   ],
   imports: [
     BrowserModule,
