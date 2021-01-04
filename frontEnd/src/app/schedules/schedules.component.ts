@@ -4,6 +4,7 @@ import { SchedulesService } from '../schedules.service';
 import {Schedule} from '../schedule';
 import { ActivatedRoute } from '@angular/router';
 import {Course} from '../course';
+import { CoursesService } from '../courses.service';
 import { UserService } from '../shared/user.service';
 
 @Component({
@@ -27,9 +28,11 @@ export class SchedulesComponent implements OnInit {
   subjectCode0: string;
   courseCode: string;
   addCourses: Course[] = [];
+  courses: Course[] = [];
 
   constructor(private location: Location,
     private userService: UserService,
+    private coursesService: CoursesService,
     private schedulesService: SchedulesService,
     private route: ActivatedRoute) { }
 
@@ -38,9 +41,28 @@ export class SchedulesComponent implements OnInit {
   }
 
   getSchedules(): void {
-    console.log(this.currentUser);
     this.schedulesService.getSchedules()
     .subscribe(schedules => this.schedules = schedules);
+
+    const ssr_component = "LEC";
+
+    for(var i = 0; i < this.schedules.length; i++){
+      if(this.schedules.length == 0){
+        return;
+      }
+      for(var j = 0; j < this.schedules[i].subject.length; j++){
+        if(this.schedules[i].subject.length == 0){
+          continue;
+        }
+        this.coursesService.getFilteredCourses(this.schedules[i].subject[j], this.schedules[i].course_code[j], ssr_component).subscribe(courses => {
+          console.log(courses[0]);
+          this.courses.push(courses[0]);
+         
+        }, err => {
+          alert("Could not find specified course! Check your search requirements!")
+        })
+      }
+    }
   }
 
   getSchedule(schedule_name: string): void{

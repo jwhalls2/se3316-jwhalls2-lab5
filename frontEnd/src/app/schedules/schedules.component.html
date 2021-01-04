@@ -12,9 +12,11 @@
             <span>{{schedule.name}}: </span> {{ele.ngClass}}
             <div>
                 <p *ngFor="let subject of schedule.subject; index as j; first as isFirst">
-                    <span class="scheduleList"> {{schedule.subject[j]}} {{schedule.course_code[j]}} </span>
-                    <br> Description: {{schedule.description}}
+                    <span class="scheduleList"> {{schedule.subject[j]}} {{schedule.course_code[j]}} - "{{courses[j].className}}" {{courses[j].course_info[0].class_section}} ({{courses[j].course_info[0].ssr_component}})
+                        <br>{{courses[j].course_info[0].days}} at {{courses[j].course_info[0].start_time}} - {{courses[j].course_info[0].end_time}}</span>
                 </p>
+                <br> Description: {{schedule.description}}
+                <br> Created By: {{schedule.user}}
             </div>
 
         </li>
