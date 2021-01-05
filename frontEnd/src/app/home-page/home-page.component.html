@@ -19,6 +19,8 @@
                 <span class="scheduleList"> {{schedule.subject[j]}} {{schedule.course_code[j]}} - "{{courses[j].className}}" {{courses[j].course_info[0].class_section}} ({{courses[j].course_info[0].ssr_component}})
                         <br>{{courses[j].course_info[0].days}} at {{courses[j].course_info[0].start_time}} - {{courses[j].course_info[0].end_time}}</span>
             </p>
+            <br> Created At: {{schedule.createdAt}}
+            <br> Updated At: {{schedule.updatedAt}}
             <br> Description: {{schedule.description}}
             <br> Created By: {{schedule.user}}
         </div>

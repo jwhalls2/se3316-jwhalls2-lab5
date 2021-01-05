@@ -18,8 +18,12 @@ const SchedSchema = mongoose.Schema({
     },
     user: {
         type: String
-    }
+    },
+    created_at: { type: Date },
+
+    updated_at: { type: Date },
 });
 
+SchedSchema.set('timestamps', true);
 const Schedule = mongoose.model('Schedules', SchedSchema);
 module.exports = Schedule;
