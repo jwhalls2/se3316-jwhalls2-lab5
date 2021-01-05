@@ -19,9 +19,9 @@ children: [{path: '', component: SignUpComponent}]},
 children: [{path: '', component: SignInComponent}]},
   { path: 'schedules', component: SchedulesComponent, canActivate: [AuthGuard] },
   { path: 'home-page', component: HomePageComponent },
-  { path: 'reviews', component: ReviewsComponent },
-  { path: 'admin', component: AdminComponent },
-  { path: 'changePassword', component: ChangePasswordComponent },
+  { path: 'reviews', component: ReviewsComponent, canActivate: [AuthGuard] },
+  { path: 'admin', component: AdminComponent, canActivate: [AuthGuard] },
+  { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
   { path: '', redirectTo: '/home-page', pathMatch: 'full' }
 ];
 

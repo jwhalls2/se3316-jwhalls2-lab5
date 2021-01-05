@@ -39,6 +39,7 @@ export class SignInComponent implements OnInit {
     this.userService.login(form.value).subscribe(res => {
         this.userService.setToken(res['token']);
         this.userService.selectedUser = res['user'];
+        console.log("Selected user is: " + this.userService.selectedUser.username);
         alert(`Sign in successful, ${res['user'].username}! Redirecting!`);
         this.router.navigateByUrl('/course-list');
     },

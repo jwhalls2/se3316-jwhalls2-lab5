@@ -17,7 +17,6 @@ import { AuthInterceptor } from './auth/auth.interceptor';
 import { UserProfileComponent } from './user-profile/user-profile/user-profile.component';
 import { ReviewsComponent } from './reviews/reviews/reviews.component';
 import { AdminComponent } from './admin/admin/admin.component';
-import { ViewPoliciesComponent } from './view-policies/view-policies.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
 
 @NgModule({
@@ -32,7 +31,6 @@ import { ChangePasswordComponent } from './change-password/change-password.compo
     UserProfileComponent,
     ReviewsComponent,
     AdminComponent,
-    ViewPoliciesComponent,
     ChangePasswordComponent
   ],
   imports: [

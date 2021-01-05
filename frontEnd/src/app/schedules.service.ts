@@ -3,6 +3,7 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import {Schedule} from './schedule';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ import {Schedule} from './schedule';
 export class SchedulesService {
 
   //Change URL back when you want to NG build.
-  private scheduleUrl = 'http://localhost:3000/api/schedules';
+  private scheduleUrl = `${environment.apiBaseUrl}/schedules`;
   noAuthHeader = { headers: new HttpHeaders({ 'NoAuth': 'True' }) };
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {

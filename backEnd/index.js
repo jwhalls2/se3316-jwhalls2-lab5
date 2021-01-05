@@ -287,7 +287,21 @@ app.put('/api/schedules/secure', [check('name').isLength({ max: 20 })], checkTok
     }
     const overwriteSchedule = req.body;
 
+    for (var i = 0; i < overwriteSchedule.subject.length; i++) {
 
+        for (var j = 0; j < courseData.length; j++) {
+
+            if (courseData[j].subject == overwriteSchedule.subject[i] &&
+                courseData[j].catalog_nbr == overwriteSchedule.course_code[i]) {
+                break;
+            } else if (j == courseData.length - 1) {
+                res.status(404).send({ message: "One or more of these courses do not exist! Check your course pairs and try again!" })
+                return;
+            }
+
+        }
+        console.log(`${overwriteSchedule.subject[i]} ${overwriteSchedule.course_code[i]} is safe to be added!`);
+    }
 
     User.findOne({ username: req.body.user }, function(err, user) {
         if (err) {

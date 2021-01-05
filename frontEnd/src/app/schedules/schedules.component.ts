@@ -19,6 +19,7 @@ export class SchedulesComponent implements OnInit {
   updatedSchedule: Schedule;
   currentUser = this.userService.selectedUser;
   
+  deleteConfirmation: string;
   publicDef: string;
   scheduleName: string;
   schedule_name: string;
@@ -42,7 +43,10 @@ export class SchedulesComponent implements OnInit {
 
   getSchedules(): void {
     this.schedulesService.getSchedules()
-    .subscribe(schedules => this.schedules = schedules);
+    .subscribe(schedules => {this.schedules = schedules}, err => {
+      alert("One or more of your courses are incorrect - please check that you have the correct course codes and subject lines and try again!");
+      return;
+    });
 
     const ssr_component = "LEC";
 
@@ -80,10 +84,28 @@ export class SchedulesComponent implements OnInit {
   deleteSchedule(delete_schedule_name: string): void{
     const name = delete_schedule_name.replace(/<[^>]*>?/gm, '');
 
+    if(this.questionUser() == 0){
+      return;
+    }
+
     this.schedulesService.deleteSchedule(name, this.currentUser.username).subscribe();
+    alert("Deleted schedule!");
+  }
+
+  questionUser(){
+    
+    if (confirm("Are you sure you want to delete this/these schedules?")) {
+      return 1;
+    } else {
+      return 0;
+    }
+
   }
 
   deleteAllSchedules(): void {
+    if(this.questionUser() == 0){
+      return;
+    }
     this.schedulesService.deleteAllSchedules(this.currentUser.username).subscribe();
     alert("Deleted all schedules!");
   }
@@ -367,10 +389,10 @@ updateSchedule(editScheduleName: string, editScheduleNumber: number,
 
   this.schedulesService.updateSchedule(updatedSchedule)
   .subscribe(res => {
-    alert("Successfully created!");
+    alert("Successfully updated!");
   },
   err => {
-    alert(err.error.message);
+    alert("One or more of these courses do not exist! Check your course pairs and try again!");
   });
 }
 }
