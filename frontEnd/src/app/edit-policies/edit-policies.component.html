@@ -1,0 +1,35 @@
+<ul *ngIf="dmca">
+    <li *ngFor="let policy of dmca">
+        <h2>Security & Privacy Policy</h2>
+        <p>{{policy.firstPolicy}}</p>
+        <br>
+        <h2>DMCA Notice & Takedown Policy</h2>
+        <p>{{policy.secondPolicy}}</p>
+        <br>
+        <h2>Acceptable Use Policy</h2>
+        <p>{{policy.thirdPolicy}}</p>
+        <button (click)="edit(policy._id)">Edit Policy</button>
+        <hr>
+    </li>
+    <div *ngIf= (display)>
+        <h2>Security & Privacy Policy</h2>
+        <textarea [(ngModel)]="firstPol" rows="10" cols="180"></textarea>
+        <h2>DMCA Notice & Takedown Policy</h2>
+        <textarea [(ngModel)]="secondPol" rows="10" cols="180"></textarea>
+        <h2>Acceptable Use Policy</h2>
+        <textarea [(ngModel)]="thirdPol" rows="10" cols="180"></textarea>
+        <br><br>
+        <button (click)="postChanges()">Submit Changes</button>
+    </div>
+</ul>
+<br>
+<button (click)="addNew()" id="newPolicy">Create New Policies</button>
+<div *ngIf= (obs)>
+    <h2>Security & Privacy Policy</h2>
+    <textarea [(ngModel)]="firstPol" rows="10" cols="180"></textarea>
+    <h2>DMCA Notice & Takedown Policy</h2>
+    <textarea [(ngModel)]="secondPol" rows="10" cols="180"></textarea>
+    <h2>Acceptable Use Policy </h2>
+    <textarea [(ngModel)]="thirdPol" rows="10" cols="180"></textarea>
+    <button (click)="newPolicy()">Submit Changes</button>
+</div>

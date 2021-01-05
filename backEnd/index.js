@@ -17,6 +17,7 @@ const stringSimilarity = require('string-similarity');
 const User = require('./models/User.js');
 const Schedule = require('./models/Schedule.js');
 const Review = require('./models/Review.js');
+const Policy = require("./models/Policy.js");
 
 //Connecting to DB
 mongoose.connect(process.env.DB_CONNECTION, { useNewUrlParser: true, useUnifiedTopology: true }, () => console.log("Connected to MongoDB!"));
@@ -538,6 +539,51 @@ app.put('/api/secure/changePassword/:username', checkToken, (req, res) => {
     }
 
 });
+//POLICY STUFF
+//Get policy route
+app.get('/api/policy', (req, res) => {
+    Policy.find(function(err, policies) {
+        if (err) {
+            res.send(err);
+        }
+        res.send(policies);
+    });
+});
+
+//Post policy route
+app.post('/api/policy', (req, res) => {
+    policy = new Policy();
+    policy.firstPolicy = req.body.firstPolicy;
+    policy.secondPolicy = req.body.secondPolicy;
+    policy.thirdPolicy = req.body.thirdPolicy;
+    policy.save(function(err, policy) {
+        if (err) {
+            res.send(err)
+        }
+        res.json({ message: "Policy Created!", policy: policy })
+    })
+})
+
+//Put policy route
+app.put('/api/policy/:policy_id', (req, res) => {
+    let policy1 = req.body.firstPolicy;
+    let policy2 = req.body.secondPolicy;
+    let policy3 = req.body.thirdPolicy;
+    Policy.findById(req.params.policy_id, function(err, policy) {
+        if (err)
+            res.send(err);
+
+        policy.firstPolicy = policy1;
+        policy.secondPolicy = policy2;
+        policy.thirdPolicy = policy3;
+
+        policy.save(function(err) {
+            if (err)
+                res.send(err)
+            res.json({ message: 'Policies Saved!' });
+        });
+    });
+})
 
 // Installing router at the address /api/courseData
 app.use('/api/courseData', router);
