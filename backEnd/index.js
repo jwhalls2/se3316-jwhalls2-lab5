@@ -11,6 +11,7 @@ const { check, validationResult } = require('express-validator');
 const mongoose = require('mongoose');
 const rateLimit = require("express-rate-limit");
 const jwt = require('jsonwebtoken');
+const stringSimilarity = require('string-similarity');
 
 //Defining Models:
 const User = require('./models/User.js');
@@ -383,7 +384,7 @@ app.get('/api/secure/allReviews', (req, res) => {
 //Allows a user to post a review
 app.post("/api/secure/review", checkToken, (req, res, next) => {
 
-    let review = new Review({
+    let newReview = new Review({
         title: req.body.title,
         courseId: req.body.courseId,
         rating: req.body.rating,
@@ -396,39 +397,30 @@ app.post("/api/secure/review", checkToken, (req, res, next) => {
     Review.findOne({ title: req.body.title }, function(err, review) {
         if (review) {
             res.status(400).send("Review with this title already exists!");
+            return;
+        } else if (!req.body.title) {
+            res.status(400).send("You must include a title for your review");
+        } else if (req.body.title.length > 30) {
+            res.status(400).send("This title is too long!");
+        } else if (!req.body.courseId) {
+            res.status(400).send("Which course are you trying to review?");
+        } else if (!req.body.rating) {
+            res.status(400).send("What is your rating for this course?");
+        } else if (!req.body.createdBy) {
+            res.status(400).send("Must be signed in to create a review!");
+        } else if (!req.body.comment) {
+            res.status(400).send("You must provide a comment for your review!");
+        } else {
+            newReview.save(function(err) {
+                if (err) {
+                    console.error(err.message);
+                    res.send(err.message);
+                } else {
+                    res.send(JSON.stringify(newReview));
+                }
+            });
         }
     })
-
-    if (!req.body.title) {
-        res.status(400).send("You must include a title for your review");
-    }
-    if (req.body.title.length > 30) {
-        res.status(400).send("This title is too long!");
-    }
-
-    if (!req.body.courseId) {
-        res.status(400).send("Which course are you trying to review?");
-    }
-
-    if (!req.body.rating) {
-        res.status(400).send("What is your rating for this course?");
-    }
-    if (!req.body.createdBy) {
-        res.status(400).send("Must be signed in to create a review!");
-    }
-
-    if (!req.body.comment) {
-        res.status(400).send("You must provide a comment for your review!");
-    } else {
-        review.save(function(err) {
-            if (err) {
-                console.error(err.message);
-                res.send(err.message);
-            } else {
-                res.send(JSON.stringify(review));
-            }
-        });
-    }
 });
 
 //Allows admins to get all reviews (hidden or not).
@@ -436,7 +428,7 @@ app.get("/api/admin/reviews/:username", (req, res) => {
     User.findOne({ username: req.params.username }, function(err, user) {
         if (user) {
             if (user.admin == true) {
-                Review.find({}, 'title comment rating courseId hidden createdBy', function(err, review) {
+                Review.find({}, 'title comment rating courseId hidden createdBy createdAt', function(err, review) {
                     if (err) {
                         return console.error(err);
                     } else if (req.body.admin == false) {

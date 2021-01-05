@@ -24,10 +24,13 @@ export class HomePageComponent implements OnInit {
 
   getSchedules(): void {
     this.schedulesService.getSchedules()
-    .subscribe(schedules => this.schedules = schedules);
-
+    .subscribe(schedules => {
+      console.log(schedules);
+      this.schedules = schedules;
+    });
+    console.log(this.schedules);
     const ssr_component = "LEC";
-
+    
     for(var i = 0; i < this.schedules.length; i++){
       if(this.schedules.length == 0){
         return;

@@ -10,35 +10,48 @@
     <input #ssr_component type="text" placeholder="Component..."/>
     <button (click)="getFilteredCourses(subject.value, catalog_nbr.value, ssr_component.value)">Search</button>
 </label>
-<br>
-<div>
-  <label> Keyword:
+    <br>
+    <div>
+        <label> Keyword:
   <input #keyword type="text" placeholder="Keyword..."/>
   <button (click)="getCourseByKey(keyword.value)">Search By Keyword</button>
 </label>
-</div>
+    </div>
 
 
 </div>
 <br>
 <button (click)="displayAll()">Display All Courses</button>
 
+<p>You can check a course's reviews by clicking on it, clicking the review button at the bottom, and clicking on the course again.
+    <br>If you wish to see another course's reviews, you should follow the same process!
+</p>
 
 <ul class="courses">
-    <div *ngFor="let course of courses"
-    (click)="ele.class = ele.class == 'showChildren' ? '' :  'showChildren'"
-  [ngClass]="{ hideChildren : ele.class !== 'showChildren' }" #ele>
-  <span class="courseList">{{course.subject}} {{course.catalog_nbr}} - "{{course.className}}" {{course.course_info[0].class_section}} ({{course.course_info[0].ssr_component}})
+    <div *ngFor="let course of courses" (click)="ele.class = ele.class == 'showChildren' ? '' :  'showChildren'" [ngClass]="{ hideChildren : ele.class !== 'showChildren' }" #ele>
+        <span class="courseList">{{course.subject}} {{course.catalog_nbr}} - "{{course.className}}" {{course.course_info[0].class_section}} ({{course.course_info[0].ssr_component}})
     <br>{{course.course_info[0].days}} at {{course.course_info[0].start_time}} - {{course.course_info[0].end_time}}
   </span> {{ele.ngClass}}
-    <div>Class Number: {{course.course_info[0].class_nbr}}
-      <br>Prerequisite Description: {{course.course_info[0].descrlong}}
-      <br>Campus: {{course.course_info[0].campus}}
-      <br>Facility ID: {{course.course_info[0]. facility_ID}}
-      <br>Instructors: {{course.course_info[0].instructors}}
-      <br>Enrollment Status: {{course.course_info[0].enrl_stat}}
-      <br>Enrollment Description: {{course.course_info[0].descr}}
-      <br>Course Description: {{course.catalog_description}}
+        <div>Class Number: {{course.course_info[0].class_nbr}}
+            <br>Prerequisite Description: {{course.course_info[0].descrlong}}
+            <br>Campus: {{course.course_info[0].campus}}
+            <br>Facility ID: {{course.course_info[0]. facility_ID}}
+            <br>Instructors: {{course.course_info[0].instructors}}
+            <br>Enrollment Status: {{course.course_info[0].enrl_stat}}
+            <br>Enrollment Description: {{course.course_info[0].descr}}
+            <br>Course Description: {{course.catalog_description}}
+            <br><button (click)=onSelect(course)> Course Review: </button>
+            <div *ngFor="let review of reviews">
+                <div *ngIf="coursePair == review.courseId">
+                    <p><br>Title: {{review.title}}</p>
+                    <p><br>Rating: {{review.rating}}</p>
+                    <p><br>Comments: {{review.comment}}</p>
+                    <p><br>Time Created: {{review.createdAt}}</p>
+                    <p><br>Posted By User: {{review.createdBy}}</p>
+                </div>
+            </div>
+
+        </div>
     </div>
-  </div>
+
 </ul>

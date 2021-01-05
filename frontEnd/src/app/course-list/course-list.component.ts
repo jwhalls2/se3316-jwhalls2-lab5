@@ -3,6 +3,7 @@ import { Location } from '@angular/common';
 import { CoursesService } from '../courses.service';
 import {Course} from '../course';
 import { ActivatedRoute } from '@angular/router';
+import { ReviewService } from '../review.service';
 
 
 @Component({
@@ -17,9 +18,13 @@ export class CourseListComponent implements OnInit {
   catalog_nbr: string;
   ssr_component: string;
   keyword: string;
+  reviews = new Array;
+  currentCourse: Course;
+  coursePair: string;
 
   constructor(private location: Location,
     private coursesService: CoursesService,
+    private reviewService: ReviewService,
     private route: ActivatedRoute) { }
 
   ngOnInit(): void {
@@ -92,6 +97,21 @@ export class CourseListComponent implements OnInit {
     }
     this.coursesService.getCoursesByNumber(cat)
     .subscribe(courses => this.courses = courses);
+  }
+
+  onSelect(course: any){
+    this.getCourseReviews();
+    this.currentCourse = course;
+    this.coursePair = `${this.currentCourse.subject} ${this.currentCourse.catalog_nbr}`;
+    console.log(this.coursePair);
+
+  }
+
+  getCourseReviews(){
+    this.reviewService.getAllReviews().subscribe(reviews => {
+      this.reviews = reviews;
+    });
+
   }
 
   displayAll(): void {
