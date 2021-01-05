@@ -3,6 +3,7 @@ import { Course } from '../course';
 import { CoursesService } from '../courses.service';
 import { Schedule } from '../schedule';
 import { SchedulesService } from '../schedules.service';
+import { UserService } from '../shared/user.service';
 
 @Component({
   selector: 'app-home-page',
@@ -13,9 +14,11 @@ export class HomePageComponent implements OnInit {
 
   schedules: Schedule[];
   courses: Course[] = [];
+  currentUser = this.userService.selectedUser;
   constructor(
     private coursesService: CoursesService,
-    private schedulesService: SchedulesService) { }
+    private schedulesService: SchedulesService,
+    private userService: UserService) { }
 
   ngOnInit(): void {
   }

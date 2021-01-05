@@ -4,6 +4,7 @@ import { CoursesService } from '../courses.service';
 import {Course} from '../course';
 import { ActivatedRoute } from '@angular/router';
 import { ReviewService } from '../review.service';
+import { UserService } from '../shared/user.service';
 
 
 @Component({
@@ -21,11 +22,13 @@ export class CourseListComponent implements OnInit {
   reviews = new Array;
   currentCourse: Course;
   coursePair: string;
+  currentUser = this.userService.selectedUser;
 
   constructor(private location: Location,
     private coursesService: CoursesService,
     private reviewService: ReviewService,
-    private route: ActivatedRoute) { }
+    private route: ActivatedRoute,
+    private userService: UserService) { }
 
   ngOnInit(): void {
     this.getCourses();
