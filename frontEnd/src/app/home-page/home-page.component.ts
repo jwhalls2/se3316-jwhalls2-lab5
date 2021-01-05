@@ -26,8 +26,10 @@ export class HomePageComponent implements OnInit {
 
     const ssr_component = "LEC";
 
-    for(var i = 0; i < this.schedules.length; i++){
+    for(var i = 0; i < 10; i++){
       if(this.schedules.length == 0){
+        return;
+      } else if(this.schedules.length ==i){
         return;
       }
       for(var j = 0; j < this.schedules[i].subject.length; j++){

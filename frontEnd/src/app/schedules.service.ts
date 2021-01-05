@@ -11,7 +11,7 @@ export class SchedulesService {
 
   //Change URL back when you want to NG build.
   private scheduleUrl = 'http://localhost:3000/api/schedules';
-  private token = localStorage.getItem("token");
+  noAuthHeader = { headers: new HttpHeaders({ 'NoAuth': 'True' }) };
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
   
@@ -36,7 +36,7 @@ export class SchedulesService {
 
   getSchedules(): Observable<Schedule[]> {
     const url = `${this.scheduleUrl}/open`;
-    return this.http.get<Schedule[]>(url);
+    return this.http.get<Schedule[]>(url, this.noAuthHeader);
   }
 
   getSchedule(schedule_name: string, username: string): Observable<Schedule[]>{

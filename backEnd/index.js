@@ -370,7 +370,7 @@ app.get("/secure/user/:username", (req, res) => {
 });
 
 //Gets all of the non-hidden reviews:
-app.get('/api/secure/allReviews', (req, res) => {
+app.get('/api/open/allReviews', (req, res) => {
     Review.find({ hidden: false, infringing: false }, 'title courseId rating comment createdBy createdAt', function(err, review) {
         if (err) {
             return console.error(err);

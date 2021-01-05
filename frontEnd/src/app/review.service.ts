@@ -6,7 +6,9 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
   providedIn: 'root'
 })
 export class ReviewService {
+  
   private reviewUrl = environment.apiBaseUrl;
+  noAuthHeader = { headers: new HttpHeaders({ 'NoAuth': 'True' }) };
   constructor(private http: HttpClient) { }
 
   addNewReview(createBody){
@@ -14,7 +16,7 @@ export class ReviewService {
   }
 
   getAllReviews(){
-    return this.http.get<[]>(this.reviewUrl + '/secure/allReviews');
+    return this.http.get<[]>(this.reviewUrl + '/open/allReviews', this.noAuthHeader);
   }
 
   getReview(title:string){
