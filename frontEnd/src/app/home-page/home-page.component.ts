@@ -11,7 +11,6 @@ import { SchedulesService } from '../schedules.service';
 })
 export class HomePageComponent implements OnInit {
 
-  scheduler = this.schedulesService;
   schedules: Schedule[];
   courses: Course[] = [];
   constructor(
@@ -19,18 +18,14 @@ export class HomePageComponent implements OnInit {
     private schedulesService: SchedulesService) { }
 
   ngOnInit(): void {
-   this.getSchedules();
   }
 
   getSchedules(): void {
     this.schedulesService.getSchedules()
-    .subscribe(schedules => {
-      console.log(schedules);
-      this.schedules = schedules;
-    });
-    console.log(this.schedules);
+    .subscribe(schedules => this.schedules = schedules);
+
     const ssr_component = "LEC";
-    
+
     for(var i = 0; i < this.schedules.length; i++){
       if(this.schedules.length == 0){
         return;
@@ -41,7 +36,7 @@ export class HomePageComponent implements OnInit {
         }
         this.coursesService.getFilteredCourses(this.schedules[i].subject[j], this.schedules[i].course_code[j], ssr_component).subscribe(courses => {
           console.log(courses[0]);
-          this.courses.push(courses[j]);
+          this.courses.push(courses[0]);
          
         }, err => {
           alert("Could not find specified course! Check your search requirements!")
